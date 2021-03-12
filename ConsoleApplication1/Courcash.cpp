@@ -41,6 +41,9 @@ student readStudentFromKeyboard();
 student * addStruct(student *, int *);
 void addStudentsToFile(ofstream*, student*, int);
 void printStudent(student);
+int searchStudent(student *, string, int);
+void changeStudent(student *, int, int);
+
 bool isFullName(string);
 bool isLetter(char);
 bool isDay(string);
@@ -153,36 +156,195 @@ void practicalWork1() {
 				}
 				else if (input == 'N' || input == 'n') {
 					continue;
-				} else
+				}
+				else
 					cout << "Error! Invalid input. \n";
-				
+
 			} while (choiseNextAction());
 			continue;
 		case 2:
+		{
 			system("CLS");
 			cout << "Task 2. Change entry. \n";
-			do {
-				try {
-					cout << "Enter fullname of student, which entry you want to change."
-						<< "Format example: \"Ivanov Ivan Ivanovich\", only letters and only 3 words. \n>> ";
-					string input;
-					getline(cin, input);
-					if (isFullName(input)) {
-						int indexOfStudent = searchStudent(students, input);
-						if (indexOfStudent != -1)
-							changeStudent(students, indexOfStudent);
-						else
-							throw << "Student was not found! \n";
-					}
+			bool isRecordsChanged = false;
+			try {
+				cout << "Enter fullname of student, which entry you want to change. \n"
+					<< "Format example: \"Ivanov Ivan Ivanovich\", only letters and only 3 words. \n>> ";
+				string input;
+				cin.ignore(32767, '\n');
+				getline(cin, input);
+				if (isFullName(input)) {
+					int indexOfStudent = searchStudent(students, input, numberOfRecords);
+					if (indexOfStudent != -1)
+						do {
+							cout << "What you need to change? \n"
+								<< "1) Fullname\n"
+								<< "2) Group\n"
+								<< "3) Id in the group\n"
+								<< "4) Sex\n"
+								<< "5) Form of education\n"
+								<< "6) Grades\n"
+								<< "7) Date of changed\n>> ";
+							int option;
+							cin >> option;
+							regex mask;
+							switch (option) {
+							case 1:
+								cout << "Enter fullName. Format example: \"Ivanov Ivan Ivanovich\", only letters and only 3 words. \n>> ";
+								cin.ignore(32767, '\n');
+								getline(cin, input);
+								if (isFullName(input)) { // first option of check
+									students[indexOfStudent].fullName = input;
+									isRecordsChanged = true;
+								}
+								else
+									cout << "Error! Invalid students FullName. Format example: \"Ivanov Ivan Ivanovich\", only letters and only 3 words. \n";
+								break;
+							case 2:
+								cout << "Enter number of group. Example: \"2284\", only numbers, without spaces and any other characters. \n>> ";
+								cin.ignore(32767, '\n');
+								getline(cin, input);
+								mask = "^[0-9]*$"; // second option of check
+								if (regex_search(input, mask)) {
+									students[indexOfStudent].group = stoi(input);
+									isRecordsChanged = true;
+								}
+								else
+									cout << "Error! Invalid number of group format. Example: \"2284\", only numbers, without spaces and any other characters. \n";
+								break;
+							case 3:
+								cout << "Enter student ID. Example: \"12\", only numbers, without spaces and any other characters. \n>> ";
+								cin.ignore(32767, '\n');
+								getline(cin, input);
+								if (regex_search(input, mask)) {
+									students[indexOfStudent].id = stoi(input);
+									isRecordsChanged = true;
+								}
+								else
+									cout << "Error! Invalid student id format. Example: \"12\", only numbers, without spaces and any other characters. \n";
+								break;
+							case 4:
+								cout << "Enter student sex. Example: only \"M\" or \"F\", without spaces and any other characters. \n>> ";
+								cin.ignore(32767, '\n');
+								getline(cin, input);
+								mask = "^[MF|mf]{1}$";
+								if (regex_search(input, mask)) {
+									students[indexOfStudent].sex = input[0];
+									isRecordsChanged = true;
+								}
+								else
+									cout << "Error! Invalid student sex format. Example: only \"M\" or \"F\", without spaces and any other characters. \n";
+								break;
+							case 5:
+								cout << "Enter student form of education. Example: \"distance\", without numbers, spaces and another characters. \n>> ";
+								cin.ignore(32767, '\n');
+								getline(cin, input);
+								mask = "^[A-Za-z]*$";
+								if (regex_search(input, mask)) {
+									students[indexOfStudent].educationForm = input;
+									isRecordsChanged = true;
+								}
+								else
+									cout << "Error! Invalid form of education format. Example: \"distance\", without numbers, spaces and another characters. \n";
+								break;
+							case 6:
+								cout << "Enter student grades. Example: \"3 4 2 5 5 3 4 0 \", grade can be only 0-5, where \"0\" is empty grade. \n>> ";
+								cin.ignore(32767, '\n');
+								getline(cin, input);
+								mask = "^[0-5]{1} {1}[0-5]{1} {1}[0-5]{1} {1}[0-5]{1} {1}[0-5]{1} {1}[0-5]{1} {1}[0-5]{1} {1}[0-5]{1}";
+								if (regex_search(input, mask)) {
+									int j = 0;
+									for (int i = 0; i <= 14; i += 2) {
+										students[indexOfStudent].grades[j] = (int)input[i] - 48;
+										j++;
+									}
+									isRecordsChanged = true;
+								}
+								else
+									cout << "Error! Invalid grades format. Example: \"3 4 2 5 5 3 4 0 \", grade can be only 0-5, where \"0\" is empty grade. \n";
+								break;
+							case 7:
+								try {
+									cout << "Enter date of change. Example: \"Mon Feb 22 12:00:01 2021\". \n>> ";
+									cin.ignore(32767, '\n');
+									getline(cin, input);
+									mask = "^[A-Za-z]{3} {1}[A-Za-z]{3} {1}[0-9]{2} {1}[0-9]{2}:{1}[0-9]{2}:{1}[0-9]{2} {1}[0-9]{4}$";
+									if (!regex_search(input, mask))
+										throw "Error! Invalid date format. Example: \"Mon Feb 22 12:00:01 2021\". \n";
+
+									student tempStudent;
+									string sub = input.substr(0, 3); // Here and below individual cases of incorrect date are checked 
+									if (isDay(sub))
+										tempStudent.changedOn.dayOfWeek = sub;
+									else
+										throw "Error! Invalid day format. Example: \"Mon\" \"Tue\", \"Wed\" etc. \n";
+
+									sub = input.substr(4, 3);
+									if (isWeek(sub))
+										tempStudent.changedOn.month = sub;
+									else
+										throw "Error! Invalid day format. Example: \"Jan\" \"Feb\", \"Mar\" etc. \n";
+
+									sub = input.substr(8, 2);
+									int intForCheck = stoi(sub);
+									if (intForCheck >= 1 && intForCheck <= 31)
+										tempStudent.changedOn.dayOfMonth = intForCheck;
+									else
+										throw "Error! Invalud day of month format. Example: \"18\", 1-31. \n";
+
+									sub = input.substr(11, 2);
+									intForCheck = stoi(sub);
+									if (intForCheck >= 0 && intForCheck <= 24)
+										tempStudent.changedOn.time.hour = sub;
+									else
+										throw "Error! Invalud hour format. Example: \"13\", 00-23. \n";
+
+									sub = input.substr(14, 2);
+									intForCheck = stoi(sub);
+									if (intForCheck >= 0 && intForCheck <= 59)
+										tempStudent.changedOn.time.minute = sub;
+									else
+										throw "Error! Invalud minute format. Example: \"29\", 00-59. \n";
+
+									sub = input.substr(17, 2);
+									intForCheck = stoi(sub);
+									if (intForCheck >= 0 && intForCheck <= 59)
+										tempStudent.changedOn.time.second = sub;
+									else
+										throw "Error! Invalud second format. Example: \"29\", 00-59. \n";
+
+									tempStudent.changedOn.year = stoi(input.substr(20, 4));
+									students[indexOfStudent].changedOn = tempStudent.changedOn;
+									isRecordsChanged = true;
+								}
+								catch (const char* msg) {
+									cout << msg;
+								}
+								break;
+							default:
+								cout << "Error! Invalid input. \n";
+								break;
+							}
+						} while (choiseNextAction());
 					else
-						throw << "Error! Invalid students FullName. Format example: \"Ivanov Ivan Ivanovich\", only letters and only 3 words. \n";
+						throw "Student was not found! \n";
 				}
-				catch (const char* msg) {
-					cout << msg;
-					continue;
-				}
-			} while (choiseNextAction());
-			continue;
+				else
+					throw "Error! Invalid students FullName. Format example: \"Ivanov Ivan Ivanovich\", only letters and only 3 words. \n";
+			}
+			catch (const char* msg) {
+				cout << msg;
+				continue;
+			}
+
+			if (isRecordsChanged) {
+				ofstream * pofile = &ofile;
+				ofile.open(path);
+				addStudentsToFile(pofile, students, numberOfRecords);
+				ofile.close();
+			}
+		}
+			break;
 		case 3:
 			system("CLS");
 			cout << "Task 3. Displaying all students. \n";
@@ -190,25 +352,25 @@ void practicalWork1() {
 				printStudent(students[i]);
 			cout << endl;
 			system("pause");
-			continue;
+			break;
 		case 4:
 
-			continue;
+			break;
 		case 5:
 
-			continue;
+			break;
 		case 6:
 
-			continue;
+			break;
 		case 7:
 
-			continue;
+			break;
 		case 8:
 
-			continue;
+			break;
 		case 9:
 
-			continue;
+			break;
 		case 10:
 			do {
 				system("CLS");
@@ -235,12 +397,12 @@ void practicalWork1() {
 				}
 
 			} while (choiseNextAction());
-			continue;
+			break;
 		case 0:
 			break;
 		default:
 			cout << "Error! Invalid input. \n";
-			continue;
+			break;
 		}
 	} while (true);
 }
@@ -544,6 +706,20 @@ void printStudent(student input) {
 	cout << input.educationForm << endl;
 	printGrades(input.grades);
 	printDate(input.changedOn);
+}
+
+int searchStudent(student * students, string input, int size) {
+	int result = -1;
+	for (int i = 0; i < size; i++)
+		if (students[i].fullName == input) {
+			result = i;
+			break;
+		}
+	return result;
+}
+
+void changeStudent(student * students, int indexOfStudent, int size) {
+
 }
 
 bool isFullName(string str) {
