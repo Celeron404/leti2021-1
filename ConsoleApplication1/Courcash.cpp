@@ -46,6 +46,8 @@ void printTop(student *, int);
 int countOfMale(student *, int);
 int countOfFemale(student *, int);
 int countOfScholarships(student *, int);
+int countOfGoodStudents(student *, int);
+int countOfExcellentStudents(student *, int);
 
 bool isFullName(string);
 bool isLetter(char);
@@ -398,7 +400,12 @@ void practicalWork1() {
 			system("pause");
 			break;
 		case 8:
-
+			system("CLS");
+			cout << "Task 6. Displaying the number of students who will not recieve the scholarship; have good and excellent grades; have only excellent grades \n";
+			cout << "Will not recieve the scholarship " << numberOfRecords - countOfScholarships(students, numberOfRecords) << " students. \n";
+			cout << "Have good and excellent grades " << countOfGoodStudents(students, numberOfRecords) << " students. \n";
+			cout << "Have only excellent grades " << countOfExcellentStudents(students, numberOfRecords) << " students. \n";
+			system("pause");
 			break;
 		case 9:
 
@@ -799,6 +806,36 @@ int countOfScholarships(student * students, int size) {
 			&& students[i].grades[5] > 3
 			&& students[i].grades[6] > 3
 			&& students[i].grades[7] > 3)
+			result++;
+	return result;
+}
+
+int countOfGoodStudents(student * students, int size) {
+	int result = 0;
+	for (int i = 0; i < size; i++)
+		if (students[i].grades[0] > 3
+			&& students[i].grades[1] > 3
+			&& students[i].grades[2] > 3
+			&& students[i].grades[3] > 3
+			&& students[i].grades[4] > 3
+			&& students[i].grades[5] > 3
+			&& students[i].grades[6] > 3
+			&& students[i].grades[7] > 3)
+			result++;
+	return result;
+}
+
+int countOfExcellentStudents(student * students, int size) {
+	int result = 0;
+	for (int i = 0; i < size; i++)
+		if (students[i].grades[0] > 4
+			&& students[i].grades[1] > 4
+			&& students[i].grades[2] > 4
+			&& students[i].grades[3] > 4
+			&& students[i].grades[4] > 4
+			&& students[i].grades[5] > 4
+			&& students[i].grades[6] > 4
+			&& students[i].grades[7] > 4)
 			result++;
 	return result;
 }
