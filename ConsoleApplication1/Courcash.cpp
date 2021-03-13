@@ -42,7 +42,9 @@ student * addStruct(student *, int *);
 void addStudentsToFile(ofstream*, student*, int);
 void printStudent(student);
 int searchStudent(student *, string, int);
-void changeStudent(student *, int, int);
+void printTop(student *, int);
+int countOfMale(student *, int);
+int countOfFemale(student *, int);
 
 bool isFullName(string);
 bool isLetter(char);
@@ -354,13 +356,39 @@ void practicalWork1() {
 			system("pause");
 			break;
 		case 4:
+		{
+			system("CLS");
+			cout << "Task 4. Displaying all students from the group. \n";
+			cout << "Enter the group. Example: \"2284\", only numbers, without spaces and any other characters. \n>> ";
+			int group;
+			cin >> group;
 
+			bool isFound = false;
+			cout << "\nAll students from the group " << group << ": \n";
+			for (int i = 0; i < numberOfRecords; i++)
+				if (students[i].group == group) {
+					printStudent(students[i]);
+					isFound = true;
+				}
+			if (isFound)
+				cout << endl;
+			else
+				cout << "Students was not found! \n";
+			system("pause");
+		}
 			break;
 		case 5:
-
+			system("CLS");
+			cout << "Task 5. Displaying top of the students by by the highest average grade. \n";
+			printTop(students, numberOfRecords);
+			system("pause");
 			break;
 		case 6:
-
+			system("CLS");
+			cout << "Task 6. Displaying counts of male and female students. \n";
+			cout << "Male students: " << countOfMale(students, numberOfRecords) << endl;
+			cout << "Female students: " << countOfFemale(students, numberOfRecords) << endl;
+			system("pause");
 			break;
 		case 7:
 
@@ -718,8 +746,41 @@ int searchStudent(student * students, string input, int size) {
 	return result;
 }
 
-void changeStudent(student * students, int indexOfStudent, int size) {
+void printTop(student * students, int size) {
+	float * avgGrades = new float[size];
+	for (int i = 0; i < size; i++)
+		avgGrades[i] = (students[i].grades[0] + students[i].grades[1] + students[i].grades[2] + students[i].grades[3] + students[i].grades[4] + students[i].grades[5] + students[i].grades[6] + students[i].grades[7]) / (float)8;
 
+	for (int j = 0; j < size; j++) {
+		float maxGrade = 0;
+		int indexOfMaxGrade = -1;
+		for (int i = 0; i < size; i++)
+			if (avgGrades[i] > 0 && avgGrades[i] > maxGrade) {
+				maxGrade = avgGrades[i];
+				indexOfMaxGrade = i;
+			}
+		cout << "Avg grade is " << avgGrades[indexOfMaxGrade] << ": \n";
+		printStudent(students[indexOfMaxGrade]);
+		avgGrades[indexOfMaxGrade] = 0;
+		cout << endl;
+	}
+
+}
+
+int countOfMale(student * students, int size) {
+	int result = 0;
+	for (int i = 0; i < size; i++)
+		if (students[i].sex == 'M' || students[i].sex == 'm')
+			result++;
+	return result;
+}
+
+int countOfFemale(student * students, int size) {
+	int result = 0;
+	for (int i = 0; i < size; i++)
+		if (students[i].sex == 'F' || students[i].sex == 'f')
+			result++;
+	return result;
 }
 
 bool isFullName(string str) {
