@@ -42,6 +42,7 @@ student * addStruct(student *, int *);
 void addStudentsToFile(ofstream*, student*, int);
 void printStudent(student);
 int searchStudent(student *, string, int);
+
 void printTop(student *, int);
 int countOfMale(student *, int);
 int countOfFemale(student *, int);
@@ -78,6 +79,8 @@ int main() {
 		default:
 			goto Exit;
 		}
+	MainMenu:
+		continue;
 	}
 Exit:
 	cout << "\nClosing the program... \n";
@@ -128,6 +131,8 @@ void practicalWork1() {
 	} while (!ifile.is_open());
 	ifile.close();
 
+
+	bool isInMenu = true;
 	do {
 		system("CLS");
 		cout << "Operations. \n"
@@ -185,7 +190,7 @@ void practicalWork1() {
 				getline(cin, input);
 				if (isFullName(input)) {
 					int indexOfStudent = searchStudent(students, input, numberOfRecords);
-					if (indexOfStudent != -1)
+					if (indexOfStudent != -1) {
 						do {
 							cout << "What you need to change? \n"
 								<< "1) Fullname\n"
@@ -282,6 +287,10 @@ void practicalWork1() {
 								break;
 							}
 						} while (choiseNextAction());
+
+						if (isRecordsChanged)
+							students[indexOfStudent].changedOn = readFullTimeFromKeyboard();
+					}
 					else
 						throw "Student was not found! \n";
 				}
@@ -328,7 +337,6 @@ void practicalWork1() {
 				cout << endl;
 			else
 				cout << "Students was not found! \n";
-			system("pause");
 		} while (choiseNextAction());
 			break;
 		case 5:
@@ -346,22 +354,22 @@ void practicalWork1() {
 			break;
 		case 7:
 			system("CLS");
-			cout << "Task 6. Displaying the number of students who will receive the scholarship. \n";
-			cout << "\t" << countOfScholarships(students, numberOfRecords) << "1\n";
+			cout << "Task 7. Displaying the number of students who will receive the scholarship. \n";
+			cout << "Will recieve the scholarship" << countOfScholarships(students, numberOfRecords) << "student(s). \n";
 			system("pause");
 			break;
 		case 8:
 			system("CLS");
-			cout << "Task 6. Displaying the number of students who will not recieve the scholarship; have good and excellent grades; have only excellent grades \n";
-			cout << "Will not recieve the scholarship " << numberOfRecords - countOfScholarships(students, numberOfRecords) << " students. \n";
-			cout << "Have good and excellent grades " << countOfGoodStudents(students, numberOfRecords) << " students. \n";
-			cout << "Have only excellent grades " << countOfExcellentStudents(students, numberOfRecords) << " students. \n";
+			cout << "Task 8. Displaying the number of students who will not recieve the scholarship; have good and excellent grades; have only excellent grades \n";
+			cout << "Will not recieve the scholarship " << numberOfRecords - countOfScholarships(students, numberOfRecords) << " student(s). \n";
+			cout << "Have good and excellent grades " << countOfGoodStudents(students, numberOfRecords) << " student(s). \n";
+			cout << "Have only excellent grades " << countOfExcellentStudents(students, numberOfRecords) << " student(s). \n";
 			system("pause");
 			break;
 		case 9:
 		do {
 			system("CLS");
-			cout << "Task 7. Displaying all students from the entered number (id) in groups. \n";
+			cout << "Task 9. Displaying all students from the entered number (id) in groups. \n";
 			cout << "Enter student ID. Example: \"12\", only numbers, without spaces and any other characters. \n>> ";
 			int id;
 			cin >> id;
@@ -377,7 +385,6 @@ void practicalWork1() {
 				cout << endl;
 			else
 				cout << "Students was not found! \n";
-			system("pause");
 		} while (choiseNextAction());
 			break;
 		case 10:
@@ -412,12 +419,13 @@ void practicalWork1() {
 			} while (choiseNextAction());
 			break;
 		case 0:
+			isInMenu = false;
 			break;
 		default:
 			cout << "Error! Invalid input. \n";
 			break;
 		}
-	} while (true);
+	} while (isInMenu);
 }
 
 int countOfRecords(ifstream * file) {
