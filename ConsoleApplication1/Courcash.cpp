@@ -134,7 +134,7 @@ void practicalWork1() {
 			<< "6) Display number of male and female students \n"
 			<< "7) Display the number of students who will receive the scholarship \n"
 			<< "8) Display the number of students who will not recieve the scholarship; have good and excellent grades; have only excellent grades \n"
-			<< "9) Display all students with the entered number (id) in the groups \n"
+			<< "9) Display all students with the entered number (id) in groups \n"
 			<< "10) Display all students from the entered date \n\n"
 			<< "0) Exit to practical works menu \n>> ";
 		int input;
@@ -408,7 +408,26 @@ void practicalWork1() {
 			system("pause");
 			break;
 		case 9:
+		{
+			system("CLS");
+			cout << "Task 7. Displaying all students from the entered number (id) in groups. \n";
+			cout << "Enter student ID. Example: \"12\", only numbers, without spaces and any other characters. \n>> ";
+			int id;
+			cin >> id;
 
+			bool isFound = false;
+			cout << "\nAll students from the entered ID " << id << ": \n";
+			for (int i = 0; i < numberOfRecords; i++)
+				if (students[i].id == id) {
+					printStudent(students[i]);
+					isFound = true;
+				}
+			if (isFound)
+				cout << endl;
+			else
+				cout << "Students was not found! \n";
+			system("pause");
+		}
 			break;
 		case 10:
 			do {
