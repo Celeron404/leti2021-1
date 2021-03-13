@@ -45,6 +45,7 @@ int searchStudent(student *, string, int);
 void printTop(student *, int);
 int countOfMale(student *, int);
 int countOfFemale(student *, int);
+int countOfScholarships(student *, int);
 
 bool isFullName(string);
 bool isLetter(char);
@@ -132,7 +133,7 @@ void practicalWork1() {
 			<< "7) Display the number of students who will receive the scholarship \n"
 			<< "8) Display the number of students who will not recieve the scholarship; have good and excellent grades; have only excellent grades \n"
 			<< "9) Display all students with the entered number (id) in the groups \n"
-			<< "10) Display all students from the entered date \n"
+			<< "10) Display all students from the entered date \n\n"
 			<< "0) Exit to practical works menu \n>> ";
 		int input;
 		cin >> input;
@@ -385,13 +386,16 @@ void practicalWork1() {
 			break;
 		case 6:
 			system("CLS");
-			cout << "Task 6. Displaying counts of male and female students. \n";
+			cout << "Task 6. Displaying numbers of male and female students. \n";
 			cout << "Male students: " << countOfMale(students, numberOfRecords) << endl;
 			cout << "Female students: " << countOfFemale(students, numberOfRecords) << endl;
 			system("pause");
 			break;
 		case 7:
-
+			system("CLS");
+			cout << "Task 6. Displaying the number of students who will receive the scholarship. \n";
+			cout << "\t" << countOfScholarships(students, numberOfRecords) << "1\n";
+			system("pause");
 			break;
 		case 8:
 
@@ -779,6 +783,22 @@ int countOfFemale(student * students, int size) {
 	int result = 0;
 	for (int i = 0; i < size; i++)
 		if (students[i].sex == 'F' || students[i].sex == 'f')
+			result++;
+	return result;
+}
+
+int countOfScholarships(student * students, int size) {
+	int result = 0;
+	for (int i = 0; i < size; i++)
+		if (students[i].educationForm == "day"
+			&& students[i].grades[0] > 3
+			&& students[i].grades[1] > 3
+			&& students[i].grades[2] > 3
+			&& students[i].grades[3] > 3
+			&& students[i].grades[4] > 3
+			&& students[i].grades[5] > 3
+			&& students[i].grades[6] > 3
+			&& students[i].grades[7] > 3)
 			result++;
 	return result;
 }
