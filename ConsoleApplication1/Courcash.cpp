@@ -48,6 +48,11 @@ int countOfFemale(student *, int);
 int countOfScholarships(student *, int);
 int countOfGoodStudents(student *, int);
 int countOfExcellentStudents(student *, int);
+void printStudentsFromDate(student *, date, int);
+void printStudentsFromDateBeforeNoon(student *, date, int);
+void printStudentsFromDateAfterNoon(student *, date, int);
+date readFullTimeFromKeyboard();
+date readDateFromKeyboard();
 
 bool isFullName(string);
 bool isLetter(char);
@@ -269,62 +274,8 @@ void practicalWork1() {
 									cout << "Error! Invalid grades format. Example: \"3 4 2 5 5 3 4 0 \", grade can be only 0-5, where \"0\" is empty grade. \n";
 								break;
 							case 7:
-								try {
-									cout << "Enter date of change. Example: \"Mon Feb 22 12:00:01 2021\". \n>> ";
-									cin.ignore(32767, '\n');
-									getline(cin, input);
-									mask = "^[A-Za-z]{3} {1}[A-Za-z]{3} {1}[0-9]{2} {1}[0-9]{2}:{1}[0-9]{2}:{1}[0-9]{2} {1}[0-9]{4}$";
-									if (!regex_search(input, mask))
-										throw "Error! Invalid date format. Example: \"Mon Feb 22 12:00:01 2021\". \n";
-
-									student tempStudent;
-									string sub = input.substr(0, 3); // Here and below individual cases of incorrect date are checked 
-									if (isDay(sub))
-										tempStudent.changedOn.dayOfWeek = sub;
-									else
-										throw "Error! Invalid day format. Example: \"Mon\" \"Tue\", \"Wed\" etc. \n";
-
-									sub = input.substr(4, 3);
-									if (isWeek(sub))
-										tempStudent.changedOn.month = sub;
-									else
-										throw "Error! Invalid day format. Example: \"Jan\" \"Feb\", \"Mar\" etc. \n";
-
-									sub = input.substr(8, 2);
-									int intForCheck = stoi(sub);
-									if (intForCheck >= 1 && intForCheck <= 31)
-										tempStudent.changedOn.dayOfMonth = intForCheck;
-									else
-										throw "Error! Invalud day of month format. Example: \"18\", 1-31. \n";
-
-									sub = input.substr(11, 2);
-									intForCheck = stoi(sub);
-									if (intForCheck >= 0 && intForCheck <= 24)
-										tempStudent.changedOn.time.hour = sub;
-									else
-										throw "Error! Invalud hour format. Example: \"13\", 00-23. \n";
-
-									sub = input.substr(14, 2);
-									intForCheck = stoi(sub);
-									if (intForCheck >= 0 && intForCheck <= 59)
-										tempStudent.changedOn.time.minute = sub;
-									else
-										throw "Error! Invalud minute format. Example: \"29\", 00-59. \n";
-
-									sub = input.substr(17, 2);
-									intForCheck = stoi(sub);
-									if (intForCheck >= 0 && intForCheck <= 59)
-										tempStudent.changedOn.time.second = sub;
-									else
-										throw "Error! Invalud second format. Example: \"29\", 00-59. \n";
-
-									tempStudent.changedOn.year = stoi(input.substr(20, 4));
-									students[indexOfStudent].changedOn = tempStudent.changedOn;
-									isRecordsChanged = true;
-								}
-								catch (const char* msg) {
-									cout << msg;
-								}
+								students[indexOfStudent].changedOn = readFullTimeFromKeyboard();
+								isRecordsChanged = true;
 								break;
 							default:
 								cout << "Error! Invalid input. \n";
@@ -359,7 +310,7 @@ void practicalWork1() {
 			system("pause");
 			break;
 		case 4:
-		{
+		do {
 			system("CLS");
 			cout << "Task 4. Displaying all students from the group. \n";
 			cout << "Enter the group. Example: \"2284\", only numbers, without spaces and any other characters. \n>> ";
@@ -378,7 +329,7 @@ void practicalWork1() {
 			else
 				cout << "Students was not found! \n";
 			system("pause");
-		}
+		} while (choiseNextAction());
 			break;
 		case 5:
 			system("CLS");
@@ -408,7 +359,7 @@ void practicalWork1() {
 			system("pause");
 			break;
 		case 9:
-		{
+		do {
 			system("CLS");
 			cout << "Task 7. Displaying all students from the entered number (id) in groups. \n";
 			cout << "Enter student ID. Example: \"12\", only numbers, without spaces and any other characters. \n>> ";
@@ -427,12 +378,16 @@ void practicalWork1() {
 			else
 				cout << "Students was not found! \n";
 			system("pause");
-		}
+		} while (choiseNextAction());
 			break;
 		case 10:
 			do {
 				system("CLS");
-				cout << "Task 10. Displaying all students from the entered date. Options: \n"
+				cout << "Task 10. Displaying all students from the entered date.";
+				cout << "Enter the date. Example: \"Mon Feb 22 12:00:01 2021\". \n>> ";
+				date inputDate = readDateFromKeyboard();
+
+				cout << "Options: \n"
 					<< "1) All day \n"
 					<< "2) Only before noon \n"
 					<< "3) Only after noon \n>> ";
@@ -441,13 +396,13 @@ void practicalWork1() {
 				cout << endl;
 				switch (input2) {
 				case 1:
-
+					printStudentsFromDate(students, inputDate, numberOfRecords);
 					break;
 				case 2:
-
+					printStudentsFromDateBeforeNoon(students, inputDate, numberOfRecords);
 					break;
 				case 3:
-
+					printStudentsFromDateAfterNoon(students, inputDate, numberOfRecords);
 					break;
 				default:
 					cout << "Error! Invalid input. \n";
@@ -538,35 +493,35 @@ student readStudentFromFile(ifstream * file) {
 	if (isWeek(sub))
 		newStudent.changedOn.month = sub;
 	else
-		throw "Error! Invalid day format. Example: \"Jan\" \"Feb\", \"Mar\" etc. \n";
+		throw "Error! Invalid month format. Example: \"Jan\" \"Feb\", \"Mar\" etc. \n";
 
 	sub = input.substr(8, 2);
 	int intForCheck = stoi(sub);
 	if (intForCheck >= 1 && intForCheck <= 31)
 		newStudent.changedOn.dayOfMonth = intForCheck;
 	else
-		throw "Error! Invalud day of month format. Example: \"18\", 1-31. \n";
+		throw "Error! Invalid day of month format. Example: \"18\", 1-31. \n";
 
 	sub = input.substr(11, 2);
 	intForCheck = stoi(sub);
 	if (intForCheck >= 0 && intForCheck <= 24)
 		newStudent.changedOn.time.hour = sub;
 	else
-		throw "Error! Invalud hour format. Example: \"13\", 00-23. \n";
+		throw "Error! Invalid hour format. Example: \"13\", 00-23. \n";
 
 	sub = input.substr(14, 2);
 	intForCheck = stoi(sub);
 	if (intForCheck >= 0 && intForCheck <= 59)
 		newStudent.changedOn.time.minute = sub;
 	else
-		throw "Error! Invalud minute format. Example: \"29\", 00-59. \n";
+		throw "Error! Invalid minute format. Example: \"29\", 00-59. \n";
 
 	sub = input.substr(17, 2);
 	intForCheck = stoi(sub);
 	if (intForCheck >= 0 && intForCheck <= 59)
 		newStudent.changedOn.time.second = sub;
 	else
-		throw "Error! Invalud second format. Example: \"29\", 00-59. \n";
+		throw "Error! Invalid second format. Example: \"29\", 00-59. \n";
 
 	newStudent.changedOn.year = stoi(input.substr(20, 4));
 
@@ -691,35 +646,35 @@ student readStudentFromKeyboard() {
 			if (isWeek(sub))
 				newStudent.changedOn.month = sub;
 			else
-				throw "Error! Invalid day format. Example: \"Jan\" \"Feb\", \"Mar\" etc. \n";
+				throw "Error! Invalid month format. Example: \"Jan\" \"Feb\", \"Mar\" etc. \n";
 
 			sub = input.substr(8, 2);
 			int intForCheck = stoi(sub);
 			if (intForCheck >= 1 && intForCheck <= 31)
 				newStudent.changedOn.dayOfMonth = intForCheck;
 			else
-				throw "Error! Invalud day of month format. Example: \"18\", 1-31. \n";
+				throw "Error! Invalid day of month format. Example: \"18\", 1-31. \n";
 
 			sub = input.substr(11, 2);
 			intForCheck = stoi(sub);
 			if (intForCheck >= 0 && intForCheck <= 24)
 				newStudent.changedOn.time.hour = sub;
 			else
-				throw "Error! Invalud hour format. Example: \"13\", 00-23. \n";
+				throw "Error! Invalid hour format. Example: \"13\", 00-23. \n";
 
 			sub = input.substr(14, 2);
 			intForCheck = stoi(sub);
 			if (intForCheck >= 0 && intForCheck <= 59)
 				newStudent.changedOn.time.minute = sub;
 			else
-				throw "Error! Invalud minute format. Example: \"29\", 00-59. \n";
+				throw "Error! Invalid minute format. Example: \"29\", 00-59. \n";
 
 			sub = input.substr(17, 2);
 			intForCheck = stoi(sub);
 			if (intForCheck >= 0 && intForCheck <= 59)
 				newStudent.changedOn.time.second = sub;
 			else
-				throw "Error! Invalud second format. Example: \"29\", 00-59. \n";
+				throw "Error! Invalid second format. Example: \"29\", 00-59. \n";
 
 			newStudent.changedOn.year = stoi(input.substr(20, 4));
 			inputIsCorrect = true;
@@ -857,6 +812,141 @@ int countOfExcellentStudents(student * students, int size) {
 			&& students[i].grades[7] > 4)
 			result++;
 	return result;
+}
+
+void printStudentsFromDate(student * students, date input, int size) {
+	for (int i = 0; i < size; i++)
+		if (students[i].changedOn.month == input.month
+			&& students[i].changedOn.dayOfMonth == input.dayOfMonth
+			&& students[i].changedOn.year == input.year)
+			printStudent(students[i]);
+}
+
+void printStudentsFromDateBeforeNoon(student * students, date input, int size) {
+	for (int i = 0; i < size; i++)
+		if (students[i].changedOn.month == input.month
+			&& students[i].changedOn.dayOfMonth == input.dayOfMonth
+			&& students[i].changedOn.year == input.year
+			&& stoi(students[i].changedOn.time.hour) < 12)
+			printStudent(students[i]);
+}
+
+void printStudentsFromDateAfterNoon(student * students, date input, int size) {
+	for (int i = 0; i < size; i++)
+		if (students[i].changedOn.month == input.month
+			&& students[i].changedOn.dayOfMonth == input.dayOfMonth
+			&& students[i].changedOn.year == input.year
+			&& stoi(students[i].changedOn.time.hour) > 12)
+			printStudent(students[i]);
+}
+
+date readFullTimeFromKeyboard() {
+	bool isCorrected = false;
+	date tempDate;
+	do {
+		cout << "Enter date of change. Example: \"Mon Feb 22 12:00:01 2021\". \n>> ";
+		string input;
+		cin.ignore(32767, '\n');
+		getline(cin, input);
+		regex mask("^[A-Za-z]{3} {1}[A-Za-z]{3} {1}[0-9]{2} {1}[0-9]{2}:{1}[0-9]{2}:{1}[0-9]{2} {1}[0-9]{4}$");
+		if (!regex_search(input, mask)) {
+			cout << "Error! Invalid date format. Example: \"Mon Feb 22 12:00:01 2021\". \n";
+			continue;
+		}
+
+		string sub = input.substr(0, 3); // Here and below individual cases of incorrect date are checked 
+		if (isDay(sub))
+			tempDate.dayOfWeek = sub;
+		else {
+			cout << "Error! Invalid day format. Example: \"Mon\" \"Tue\", \"Wed\" etc. \n";
+			continue;
+		}
+
+		sub = input.substr(4, 3);
+		if (isWeek(sub))
+			tempDate.month = sub;
+		else {
+			cout << "Error! Invalid month format. Example: \"Jan\" \"Feb\", \"Mar\" etc. \n";
+			continue;
+		}
+
+		sub = input.substr(8, 2);
+		int intForCheck = stoi(sub);
+		if (intForCheck >= 1 && intForCheck <= 31)
+			tempDate.dayOfMonth = intForCheck;
+		else {
+			cout << "Error! Invalid day of month format. Example: \"18\", 1-31. \n";
+			continue;
+		}
+
+		sub = input.substr(11, 2);
+		intForCheck = stoi(sub);
+		if (intForCheck >= 0 && intForCheck <= 24)
+			tempDate.time.hour = sub;
+		else {
+			cout << "Error! Invalid hour format. Example: \"13\", 00-23. \n";
+			continue;
+		}
+
+		sub = input.substr(14, 2);
+		intForCheck = stoi(sub);
+		if (intForCheck >= 0 && intForCheck <= 59)
+			tempDate.time.minute = sub;
+		else {
+			cout << "Error! Invalid minute format. Example: \"29\", 00-59. \n";
+			continue;
+		}
+
+		sub = input.substr(17, 2);
+		intForCheck = stoi(sub);
+		if (intForCheck >= 0 && intForCheck <= 59)
+			tempDate.time.second = sub;
+		else {
+			cout << "Error! Invalid second format. Example: \"29\", 00-59. \n";
+			continue;
+		}
+
+		tempDate.year = stoi(input.substr(20, 4));
+		isCorrected = true;
+	} while (!isCorrected);
+	return tempDate;
+}
+
+date readDateFromKeyboard() {
+	bool isCorrected = false;
+	date tempDate;
+	do {
+		cout << "Enter date of change. Example: \"Feb 22 2021\". \n>> ";
+		string input;
+		cin.ignore(32767, '\n');
+		getline(cin, input);
+		regex mask("^[A-Za-z]{3} {1}[0-9]{2} {1}[0-9]{4}$");
+		if (!regex_search(input, mask)) {
+			cout << "Error! Invalid date format. Example: \"Feb 22 2021\". \n";
+			continue;
+		}
+
+		string sub = input.substr(0, 3);
+		if (isWeek(sub))
+			tempDate.month = sub;
+		else {
+			cout << "Error! Invalid month format. Example: \"Jan\" \"Feb\", \"Mar\" etc. \n";
+			continue;
+		}
+
+		sub = input.substr(4, 2);
+		int intForCheck = stoi(sub);
+		if (intForCheck >= 1 && intForCheck <= 31)
+			tempDate.dayOfMonth = intForCheck;
+		else {
+			cout << "Error! Invalid day of month format. Example: \"18\", 1-31. \n";
+			continue;
+		}
+
+		tempDate.year = stoi(input.substr(7, 4));
+		isCorrected = true;
+	} while (!isCorrected);
+	return tempDate;
 }
 
 bool isFullName(string str) {
