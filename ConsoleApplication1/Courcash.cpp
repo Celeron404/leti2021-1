@@ -211,6 +211,7 @@ void practicalWork1() {
 								if (isFullName(input)) { // first option of check
 									students[indexOfStudent].fullName = input;
 									isRecordsChanged = true;
+									cout << "Entry updated! \n";
 								}
 								else
 									cout << "Error! Invalid students FullName. Format example: \"Ivanov Ivan Ivanovich\", only letters and only 3 words. \n";
@@ -223,6 +224,7 @@ void practicalWork1() {
 								if (regex_search(input, mask)) {
 									students[indexOfStudent].group = stoi(input);
 									isRecordsChanged = true;
+									cout << "Entry updated! \n";
 								}
 								else
 									cout << "Error! Invalid number of group format. Example: \"2284\", only numbers, without spaces and any other characters. \n";
@@ -234,6 +236,7 @@ void practicalWork1() {
 								if (regex_search(input, mask)) {
 									students[indexOfStudent].id = stoi(input);
 									isRecordsChanged = true;
+									cout << "Entry updated! \n";
 								}
 								else
 									cout << "Error! Invalid student id format. Example: \"12\", only numbers, without spaces and any other characters. \n";
@@ -246,6 +249,7 @@ void practicalWork1() {
 								if (regex_search(input, mask)) {
 									students[indexOfStudent].sex = input[0];
 									isRecordsChanged = true;
+									cout << "Entry updated! \n";
 								}
 								else
 									cout << "Error! Invalid student sex format. Example: only \"M\" or \"F\", without spaces and any other characters. \n";
@@ -258,6 +262,7 @@ void practicalWork1() {
 								if (regex_search(input, mask)) {
 									students[indexOfStudent].educationForm = input;
 									isRecordsChanged = true;
+									cout << "Entry updated! \n";
 								}
 								else
 									cout << "Error! Invalid form of education format. Example: \"distance\", without numbers, spaces and another characters. \n";
@@ -274,6 +279,7 @@ void practicalWork1() {
 										j++;
 									}
 									isRecordsChanged = true;
+									cout << "Entry updated! \n";
 								}
 								else
 									cout << "Error! Invalid grades format. Example: \"3 4 2 5 5 3 4 0 \", grade can be only 0-5, where \"0\" is empty grade. \n";
@@ -281,6 +287,7 @@ void practicalWork1() {
 							case 7:
 								students[indexOfStudent].changedOn = readFullTimeFromKeyboard();
 								isRecordsChanged = true;
+								cout << "Entry updated! \n";
 								break;
 							default:
 								cout << "Error! Invalid input. \n";
@@ -290,6 +297,7 @@ void practicalWork1() {
 
 						if (isRecordsChanged)
 							students[indexOfStudent].changedOn = readFullTimeFromKeyboard();
+						cout << "Entry updated! \n";
 					}
 					else
 						throw "Student was not found! \n";
@@ -355,7 +363,7 @@ void practicalWork1() {
 		case 7:
 			system("CLS");
 			cout << "Task 7. Displaying the number of students who will receive the scholarship. \n";
-			cout << "Will recieve the scholarship" << countOfScholarships(students, numberOfRecords) << "student(s). \n";
+			cout << "Will recieve the scholarship " << countOfScholarships(students, numberOfRecords) << " student(s). \n";
 			system("pause");
 			break;
 		case 8:
