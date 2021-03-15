@@ -67,6 +67,7 @@ bool choiseNextAction();
 
 int main() {
 	while (true) {
+		system("CLS");
 		cout << "Practical works: \n"
 			<< "\t1) Structures \n"
 			<< "Enter the number of practical work or enter 0 for close the program... \n>> ";
@@ -79,8 +80,6 @@ int main() {
 		default:
 			goto Exit;
 		}
-	MainMenu:
-		continue;
 	}
 Exit:
 	cout << "\nClosing the program... \n";
