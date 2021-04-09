@@ -4,11 +4,7 @@
 #include <string>
 using namespace std;
 
-bool isDigit(char input) {
-	if (input >= 48 && input <= 57)
-		return true;
-	else return false;
-}
+bool isDigit(char);
 
 int countOfElements(ifstream * file) {
 	string t;
@@ -21,4 +17,10 @@ int countOfElements(ifstream * file) {
 		count++;								// count the number of linebreakes
 	}
 	return count;
+}
+
+bool isDigit(char input) {
+	if (input >= 48 && input <= 57)
+		return true;
+	else return false;
 }

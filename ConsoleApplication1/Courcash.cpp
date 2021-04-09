@@ -36,8 +36,7 @@ struct student {
 void practicalWork1();
 void practicalWork2();
 
-int countOfElements(ifstream * file);
-bool isDigit(char input);
+int countOfElements(ifstream * file);	// функции определены в другом файле
 
 int countOfRecords(ifstream *);
 student readStudentFromFile(ifstream *);
