@@ -152,8 +152,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Courcash.cpp" />
-    <ClCompile Include="test add.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="practicalWork2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

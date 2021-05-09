@@ -441,53 +441,6 @@ void practicalWork1() {
 	} while (isInMenu);
 }
 
-void practicalWork2() {
-	system("CLS");
-	cout << "Solution of task \"Working with Dynamic Massives and Doubly Linked Lists\". \n\n" <<
-		"Task 1. Reading file. \n";
-
-	ifstream ifile;
-	ofstream ofile;
-	string path;
-	int numberOfElements;
-	int * dynArr = 0;
-	do {
-		cout << "Enter the path to the file. \n"
-			<< "Only english words in the file and path! Example: C:\\anime\\arrr.txt \n>> ";
-		cin.ignore(32767, '\n');
-		getline(cin, path);
-		ifile.open(path);
-		if (!ifile.is_open()) {
-			cout << "Error opening file! Please restart the program! \n";
-			continue;
-		}
-
-		ifstream *pifile = &ifile;
-		numberOfElements = countOfElements(pifile);
-		if (numberOfElements == 0) {
-			cout << "Error! No elements founds.\n";
-			continue;
-		}
-
-		//debug
-		cout << "Number of elements: " << numberOfElements << endl;
-		system("pause");
-		// Тут проверяем файл на корректность (в пределах разумного)
-
-		ifile.close();
-		ifile.open(path);
-		dynArr = new int[numberOfElements];
-		
-		// Тут заполняем массив из файла
-
-		//catch (const char* msg) {
-		//	cout << msg;
-		//	continue;
-		//}
-	} while (!ifile.is_open());
-	ifile.close();
-}
-
 int countOfRecords(ifstream * file) {
 	string t;
 	int count = 0;
