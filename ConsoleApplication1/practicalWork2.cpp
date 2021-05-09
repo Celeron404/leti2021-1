@@ -2,14 +2,25 @@
 #include <fstream>
 #include <iomanip>
 #include <string>
+#include <chrono>
+using namespace std::chrono;
 using namespace std;
 
-bool isDigit(char);
-int countOfElements(ifstream *);
+bool isDigit(char input);
+int countOfElements(ifstream * file);
 void fillArrayFromFile(ifstream * file, int * arr, int arrSize);
+
+float stopSecondsTimer(time_point<steady_clock> startTimer);
+long long stopNanoSecondsTimer(time_point<steady_clock> startTimer);
 
 
 void practicalWork2() {
+	// Timer
+	srand((unsigned)time(NULL));
+	time_point<steady_clock> startTimer = steady_clock::now();
+	float stopTimeInSeconds = stopSecondsTimer(startTimer);
+	long long stopTimeInNanoSeconds = stopNanoSecondsTimer(startTimer);
+
 	system("CLS");
 	cout << "Solution of task \"Working with Dynamic Massives and Doubly Linked Lists\". \n\n" <<
 		"Task 1. Reading file. \n";
@@ -39,9 +50,23 @@ void practicalWork2() {
 
 		ifile.close();
 		ifile.open(path);
+		startTimer = steady_clock::now();
 		dynArr = new int[numberOfElements];
-
 		fillArrayFromFile(pifile, dynArr, numberOfElements);
+		stopTimeInSeconds = stopSecondsTimer(startTimer);
+		cout << "Dynamic array has been initialized and filled in " << fixed << stopTimeInSeconds << " second(s). \n";
+		system("pause");
+		
+		/*{
+			cout << "--- Debug ---\n";
+			for (int i = 0; i < numberOfElements; i++)
+			{
+				cout << dynArr[i] << ' ';
+			}
+			cout << "\n--- End of Debug ---\n";
+			system("pause");
+		}*/
+
 
 	} while (!ifile.is_open());
 	ifile.close();
@@ -87,14 +112,6 @@ void fillArrayFromFile(ifstream * file, int * arr, int arrSize) {
 			arrPos++;
 		}
 	}
-	
-	/*cout << "--- Debug ---\n";
-	for (int i = 0; i < arrSize; i++)
-	{
-		cout << arr[i] << ' ';
-	}
-	cout << "\n--- End of Debug ---\n";
-	system("pause");*/
 }
 
 bool isDigit(char input) {
