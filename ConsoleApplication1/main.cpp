@@ -69,23 +69,30 @@ bool choiseNextAction();
 
 int main() {
 	while (true) {
-		system("CLS");
-		cout << "Practical works: \n" <<
-			"\t1) Structures \n" <<
-			"\t2) Dynamic Massives and Doubly Linked Lists \n" <<
-			"Enter the number of practical work or enter 0 for close the program... \n>> ";
-		int input;
-		cin >> input;
-		switch (input) {
-		case 1:
-			practicalWork1();
-			break;
-		case 2:
-			practicalWork2();
-			break;
-		default:
-			goto Exit;
+		try {
+			system("CLS");
+			cout << "Practical works: \n" <<
+				"\t1) Structures \n" <<
+				"\t2) Dynamic Massives and Doubly Linked Lists \n" <<
+				"Enter the number of practical work or enter 0 for close the program... \n>> ";
+			int input;
+			cin >> input;
+			switch (input) {
+			case 1:
+				practicalWork1();
+				break;
+			case 2:
+				practicalWork2();
+				break;
+			default:
+				goto Exit;
+			}
 		}
+		catch (int exception) {
+			if (exception == -1)
+				goto Exit;
+		}
+		catch (...) {}
 	}
 Exit:
 	cout << "\nClosing the program... \n";
@@ -110,7 +117,7 @@ void practicalWork1() {
 		ifile.open(path);
 		if (!ifile.is_open()) {
 			cout << "Error opening file! Please restart the program! \n";
-			continue;
+			throw -1;
 		}
 
 		ifstream *pifile = &ifile;
@@ -1034,26 +1041,3 @@ void printDate(date input) {
 void printGrades(short * input) {
 	cout << input[0] << ' ' << input[1] << ' ' << input[2] << ' ' << input[3] << ' ' << input[4] << ' ' << input[5] << ' ' << input[6] << ' ' << input[7] << ' ' << endl;
 }
-
-bool choiseNextAction() {
-	cout << "\nDo you want to repeat (y/n)?" << "\n>> ";
-	char input;
-	while (true) {
-		cin >> input;
-		if (input == 'y' || input == 'Y')
-			return true;
-		else if (input == 'n' || input == 'N')
-			return false;
-		else
-			cout << "Wrong input! Try again...\n>> ";
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void createOneDimArrFromFile(int * arr, int * size = 0) { // Создание динамического одномерного массива размерности кол-ва элементов файла
-
-}
-	//bool isFileCorrect(ifstream * file, int size) {
-
-	//}

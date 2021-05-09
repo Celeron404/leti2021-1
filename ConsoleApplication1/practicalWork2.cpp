@@ -9,10 +9,12 @@ using namespace std;
 bool isDigit(char input);
 int countOfElements(ifstream * file);
 void fillArrayFromFile(ifstream * file, int * arr, int arrSize);
+int getArrayElement(int * arr, int size, int input);
 
 float stopSecondsTimer(time_point<steady_clock> startTimer);
 long long stopNanoSecondsTimer(time_point<steady_clock> startTimer);
 
+bool choiseNextAction();
 
 void practicalWork2() {
 	// Timer
@@ -23,7 +25,7 @@ void practicalWork2() {
 
 	system("CLS");
 	cout << "Solution of task \"Working with Dynamic Massives and Doubly Linked Lists\". \n\n" <<
-		"Task 1. Reading file. \n";
+		"\tTask 1. Reading file and creating dynamic massive and doubly linked list. \n";
 
 	ifstream ifile;
 	ofstream ofile;
@@ -31,14 +33,14 @@ void practicalWork2() {
 	int numberOfElements;
 	int * dynArr = 0;
 	do {
-		cout << "Enter the path to the file. \n"
-			<< "Only english words in the file and path! Example: C:\\anime\\arrr.txt \n>> ";
+		cout << "\nEnter the path to the file. \n"
+			<< "Only english words in the file and path! Example: C:\\anime\\pr2testFile.txt \n>> ";
 		cin.ignore(32767, '\n');
 		getline(cin, path);
 		ifile.open(path);
 		if (!ifile.is_open()) {
 			cout << "Error opening file! Please restart the program! \n";
-			continue;
+			throw - 1;
 		}
 
 		ifstream *pifile = &ifile;
@@ -54,7 +56,7 @@ void practicalWork2() {
 		dynArr = new int[numberOfElements];
 		fillArrayFromFile(pifile, dynArr, numberOfElements);
 		stopTimeInSeconds = stopSecondsTimer(startTimer);
-		cout << "Dynamic array has been initialized and filled in " << fixed << stopTimeInSeconds << " second(s). \n";
+		cout << "\nDynamic array has been initialized and filled in " << fixed << stopTimeInSeconds << " second(s). \n";
 		system("pause");
 		
 		/*{
@@ -67,7 +69,62 @@ void practicalWork2() {
 			system("pause");
 		}*/
 
+		do {
+			cout << "\n\tTask 2. Dynamic array and doubly linked list operations. \n"
+				<< "1) Getting and element\n"
+				<< "2) Element insertion\n"
+				<< "3) Deleting an element\n"
+				<< "Enter option number... \n>> ";
+			int input;
+			cin >> input;
+			switch (input) {
+			case 1:
+				do {
+					cout << "\nTypes of getting: \n"
+						<< "1) On index\n"
+						<< "2) On value\n"
+						<< "Enter option number... \n>> ";
+					cin >> input;
+					switch (input) {
+					case 1:
+						cout << "\nEnter the index of element... \n>>";
+						cin >> input;
+						if ((input < numberOfElements) && (input >= 0)) {
+							startTimer = steady_clock::now();
+							int result = dynArr[input];
+							// double linked list operation here
+							stopTimeInSeconds = stopSecondsTimer(startTimer);
+							cout << "\n" << input << " element has containing the value " << result << ". \n";
+							cout << "Element found in dynamic array for " << fixed << stopTimeInSeconds << " second(s). \n";
+						}
+						else cout << "Error! Array has not contain that element\n";
+						break;
+					case 2:
+						cout << "\nEnter the value of element... \n>>";
+						cin >> input;
+						startTimer = steady_clock::now();
+						int result = getArrayElement(dynArr, numberOfElements, input);
+						// double linked list operation here
+						stopTimeInSeconds = stopSecondsTimer(startTimer);
+						if (result != -1) {
+							cout << "\nThe first found element with a value of " << input << " has an index " << result << " .\n";
+							cout << "Element found in dynamic array for " << fixed << stopTimeInSeconds << " second(s). \n";
+						}
+						else cout << "Error! The element has not found. \n";
+						break;
+					}
+					cout << "End of the getting. \n";
+				} while (choiseNextAction());
+				break;
+			case 2:
 
+				break;
+			case 3:
+
+				break;
+			}
+			cout << "End of the Task 2. \n";
+		} while (choiseNextAction());
 	} while (!ifile.is_open());
 	ifile.close();
 }
@@ -94,7 +151,7 @@ void fillArrayFromFile(ifstream * file, int * arr, int arrSize) {
 		getline(*file, tStr);
 
 		// Extracting a numbers from string to array
-		for (int tStrPos = 0; tStrPos < tStr.length(); tStrPos++)
+		for (int unsigned tStrPos = 0; tStrPos < tStr.length(); tStrPos++)
 		{
 			char * tNum = new char[tStr.length()];
 			int tNumPos = 0;
@@ -112,6 +169,16 @@ void fillArrayFromFile(ifstream * file, int * arr, int arrSize) {
 			arrPos++;
 		}
 	}
+}
+
+int getArrayElement(int * arr, int size, int input) {
+	int result = -1;
+	for (int i = 0; i < size; i++)
+		if (arr[i] == input) {
+			result = i;
+			break;
+		}
+	return result;		
 }
 
 bool isDigit(char input) {
