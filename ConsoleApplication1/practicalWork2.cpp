@@ -177,12 +177,12 @@ void practicalWork2() {
 					startTimer = steady_clock::now();
 					dynArr = increaseArray(dynArr, &numberOfElements);
 					insertToArr(dynArr, numberOfElements, input, inputIndex);
-					stopDynTime = stopSecondsTimer(startTimer);
+					stopDynNanoTime = stopNanoSecondsTimer(startTimer);
 
 					// working with a doubly linked list
+					startTimer = steady_clock::now();
 
-
-					cout << "Element has been inserted in dynamic array for " << fixed << stopDynTime << " second(s). \n";
+					cout << "Element has been inserted in dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
 				}
 				break;
 			case 3:
@@ -201,12 +201,12 @@ void practicalWork2() {
 						startTimer = steady_clock::now();
 						deleteArrElement(dynArr, numberOfElements, input);
 						dynArr = decreaseArray(dynArr, &numberOfElements);
-						stopDynTime = stopSecondsTimer(startTimer);
+						stopDynNanoTime = stopNanoSecondsTimer(startTimer);
 
 						// working with a doubly linked list
+						startTimer = steady_clock::now();
 
-
-						cout << "Element has been deleted from dynamic array for " << fixed << stopDynTime << " second(s). \n";
+						cout << "Element has been deleted from dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
 					}
 					else cout << "Error! Array has not contain that element\n";
 					break;
@@ -221,12 +221,12 @@ void practicalWork2() {
 					{
 						deleteArrElement(dynArr, numberOfElements, index);
 						dynArr = decreaseArray(dynArr, &numberOfElements);
-						stopDynTime = stopSecondsTimer(startTimer);
+						stopDynNanoTime = stopNanoSecondsTimer(startTimer);
 
 						// working with a doubly linked list
+						startTimer = steady_clock::now();
 
-
-						cout << "Element has been deleted from dynamic array for " << fixed << stopDynTime << " second(s). \n";
+						cout << "Element has been deleted from dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
 					}
 					else cout << "Error! The element has not found. \n";
 					break;
