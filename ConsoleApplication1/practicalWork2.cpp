@@ -31,6 +31,7 @@ void fillListFromFile(ifstream * file, list * list);
 void printList(list *list);
 int getListElementByIndex(list *dlList, int index);
 int getListElementByValue(list *dlList, int value);
+list * insertToList(list *dlList, int value, unsigned index);
 
 //secondary functions
 bool isDigit(char input);
@@ -138,7 +139,7 @@ void practicalWork2() {
 						cout << "\nElement found in dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
 						cout << "Element found in doubly linked list for " << fixed << stopListNanoTime << " nanosecond(s). \n";
 					}
-					else cout << "Error! Array has not contain that element\n";
+					else cout << "Error! Array has not contain that index\n";
 					break;
 				case 2:
 					cout << "\nEnter the value of element... \n>> ";
@@ -171,7 +172,7 @@ void practicalWork2() {
 				int inputIndex;
 				cout << "\nEnter the index of insertion... \n>> ";
 				cin >> inputIndex;
-				if ((inputIndex >= 0) && (inputIndex < numberOfElements))
+				if ((inputIndex >= 0) && (inputIndex <= numberOfElements))
 				{
 					// working with an array
 					startTimer = steady_clock::now();
@@ -181,9 +182,16 @@ void practicalWork2() {
 
 					// working with a doubly linked list
 					startTimer = steady_clock::now();
+					dlList = insertToList(dlList, input, inputIndex);
+					stopListNanoTime = stopNanoSecondsTimer(startTimer);
 
 					cout << "Element has been inserted in dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
+					cout << "Element has been inserted in doubly linked list for " << fixed << stopListNanoTime << " nanosecond(s). \n";
+					// uncomment to debug
+					printArr(dynArr, numberOfElements);
+					printList(dlList);
 				}
+				else cout << "Error! Array has not contain that index\n";
 				break;
 			case 3:
 				cout << "\nTypes of deleting: \n"
@@ -441,4 +449,42 @@ int getListElementByValue(list *dlList, int value)
 		}
 	} while (pos);
 	return -1;
+}
+
+list * insertToList(list *dlList, int value, unsigned index)
+{
+	list * newDlList = new list;
+	newDlList->value = value;
+
+	list *pos = dlList;
+	do {
+		if (index == 0)
+		{
+			if (pos->before == 0)
+			{
+				newDlList->before = 0;
+				newDlList->after = pos;
+				pos->before = newDlList;
+				return newDlList;
+			}
+			else if ()
+			{
+				newDlList->after = 0;
+				
+
+				return dlList;
+			}
+			else
+			{
+				newDlList->before = pos->before;
+				newDlList->after = pos;
+				pos->before->after = newDlList;
+				pos->before = newDlList;
+				return dlList;
+			}
+		}
+		else
+			pos = pos->after;
+		index--;
+	} while (pos);
 }
