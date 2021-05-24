@@ -116,7 +116,8 @@ void practicalWork2() {
 				case 1:
 					cout << "\nEnter the index of element... \n>> ";
 					cin >> input;
-					if ((input < numberOfElements) && (input >= 0)) {
+					if ((input < numberOfElements) && (input >= 0))
+					{
 						// working with an array
 						startTimer = steady_clock::now();
 						int result = dynArr[input];
@@ -180,7 +181,8 @@ void practicalWork2() {
 				case 1:
 					cout << "\nEnter the index of element... \n>> ";
 					cin >> input;
-					if ((input < numberOfElements) && (input >= 0)) {
+					if ((input < numberOfElements) && (input >= 0))
+					{
 						// working with an array
 						startTimer = steady_clock::now();
 						deleteArrElement(dynArr, numberOfElements, input);
@@ -225,7 +227,8 @@ void practicalWork2() {
 	ifile.close();
 }
 
-int countOfElements(ifstream * file) {
+int countOfElements(ifstream * file)
+{
 	string t;
 	int count = 0;
 	while (std::getline(*file, t)) {
@@ -238,7 +241,8 @@ int countOfElements(ifstream * file) {
 	return count;
 }
 
-void fillArrayFromFile(ifstream * file, int * arr, int arrSize) {
+void fillArrayFromFile(ifstream * file, int * arr, int arrSize)
+{
 	int arrPos = 0;
 	while ((arrPos < arrSize) && (!file->eof()))
 	{ 
@@ -267,7 +271,8 @@ void fillArrayFromFile(ifstream * file, int * arr, int arrSize) {
 	}
 }
 
-int getArrayElement(int * arr, int size, int input) {
+int getArrayElement(int * arr, int size, int input)
+{
 	int result = -1;
 	for (int i = 0; i < size; i++)
 		if (arr[i] == input) {
@@ -277,7 +282,8 @@ int getArrayElement(int * arr, int size, int input) {
 	return result;		
 }
 
-int * increaseArray(int * obj, int * size) {
+int * increaseArray(int * obj, int * size)
+{
 	int * tempObj = new int[*size + 1];
 	for (int i = 0; i < *size; i++) {
 		tempObj[i] = obj[i];
@@ -288,7 +294,8 @@ int * increaseArray(int * obj, int * size) {
 	return obj;
 }
 
-int * decreaseArray(int * obj, int * size) {
+int * decreaseArray(int * obj, int * size)
+{
 	int * tempObj = new int[*size - 1];
 	for (int i = 0; i < *size - 1; i++) {
 		tempObj[i] = obj[i];
@@ -342,10 +349,10 @@ list * createList(int size) {
 	for (int i = 1; i <= size; i++)
 	{
 		current = new list;
-		current->after = after; // add address of next element
+		current->after = after; // adding an address of next element
 		if (after)
-			after->before = current; // write address of current element to next element
-		after = current; // change position of current element
+			after->before = current; // writing an address of current element to next element
+		after = current; // changing position of current element
 	}
 	current->before = 0;
 	return current;
