@@ -467,13 +467,14 @@ list * insertToList(list *dlList, int value, unsigned index)
 				pos->before = newDlList;
 				return newDlList;
 			}
-			else if ()
+			//we got a problem
+			/*else if ()
 			{
 				newDlList->after = 0;
 				
 
 				return dlList;
-			}
+			}*/
 			else
 			{
 				newDlList->before = pos->before;
