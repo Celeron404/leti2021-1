@@ -30,6 +30,7 @@ list * createList(int size);
 void fillListFromFile(ifstream * file, list * list);
 void printList(list *list);
 int getListElementByIndex(list *dlList, int index);
+int getListElementByValue(list *dlList, int value);
 
 //secondary functions
 bool isDigit(char input);
@@ -95,7 +96,7 @@ void practicalWork2() {
 		cout << "\nDoubly linked list has been initialized and filled in " << fixed << stopListTime << " second(s). \n";
 		system("pause");
 
-		// unflag to debug
+		// uncomment to debug
 		//printList(dlList);
 		//printArr(dynArr, numberOfElements);
 
@@ -131,8 +132,8 @@ void practicalWork2() {
 						stopListNanoTime = stopNanoSecondsTimer(startTimer);
 
 						cout << "\n" << input << " element has containing the value " << dynArrResult << ". \n";
-						//debugging
-						cout << input << " element has containing the value " << dlListResult << ". \n";
+						// uncomment to debug
+						//cout << input << " element has containing the value " << dlListResult << ". \n";
 
 						cout << "\nElement found in dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
 						cout << "Element found in doubly linked list for " << fixed << stopListNanoTime << " nanosecond(s). \n";
@@ -145,15 +146,20 @@ void practicalWork2() {
 
 					// working with an array
 					startTimer = steady_clock::now();
-					int result = getArrayElement(dynArr, numberOfElements, input);
-					stopDynTime = stopSecondsTimer(startTimer);
+					int dynArrResult = getArrayElement(dynArr, numberOfElements, input);
+					stopDynNanoTime = stopNanoSecondsTimer(startTimer);
 
 					// working with a doubly linked list
+					startTimer = steady_clock::now();
+					int dlListResult = getListElementByValue(dlList, input);
+					stopListNanoTime = stopNanoSecondsTimer(startTimer);
 
-
-					if (result != -1) {
-						cout << "\nThe first found element with a value of " << input << " has an index " << result << " .\n";
-						cout << "Element found in dynamic array for " << fixed << stopDynTime << " second(s). \n";
+					if ((dynArrResult != -1) && (dlListResult != -1)) {
+						cout << "\nThe first found element with a value of " << input << " has an index " << dynArrResult << ".\n";
+						// uncomment to debug
+						//cout << "\nThe first found element with a value of " << input << " has an index " << dlListResult << ".\n";
+						cout << "Element found in dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
+						cout << "Element found in doubly linked list for " << fixed << stopListNanoTime << " nanosecond(s). \n";
 					}
 					else cout << "Error! The element has not found. \n";
 					break;
@@ -420,4 +426,19 @@ int getListElementByIndex(list *dlList, int index)
 		pos = pos->after;
 		index--;
 	} while (pos);
+}
+
+int getListElementByValue(list *dlList, int value)
+{
+	int index = 0;
+	list *pos = dlList;
+	do {
+		if (pos->value == value)
+			return index;
+		else {
+			pos = pos->after;
+			index++;
+		}
+	} while (pos);
+	return -1;
 }
