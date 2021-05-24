@@ -29,6 +29,7 @@ void printArr(int * arr, int size);
 list * createList(int size);
 void fillListFromFile(ifstream * file, list * list);
 void printList(list *list);
+int getListElementByIndex(list *dlList, int index);
 
 //secondary functions
 bool isDigit(char input);
@@ -42,7 +43,8 @@ void practicalWork2() {
 	time_point<steady_clock> startTimer = steady_clock::now();
 	float stopDynTime = stopSecondsTimer(startTimer);
 	float stopListTime = stopSecondsTimer(startTimer);
-	long long stopTimeInNanoSeconds = stopNanoSecondsTimer(startTimer);
+	long long stopDynNanoTime = stopNanoSecondsTimer(startTimer);
+	long long stopListNanoTime = stopNanoSecondsTimer(startTimer);
 
 	system("CLS");
 	cout << "Solution of task \"Working with Dynamic Massives and Doubly Linked Lists\". \n\n" <<
@@ -120,14 +122,20 @@ void practicalWork2() {
 					{
 						// working with an array
 						startTimer = steady_clock::now();
-						int result = dynArr[input];
-						stopDynTime = stopSecondsTimer(startTimer);
+						int dynArrResult = dynArr[input];
+						stopDynNanoTime = stopNanoSecondsTimer(startTimer);
 
 						// working with a doubly linked list
+						startTimer = steady_clock::now();
+						int dlListResult = getListElementByIndex(dlList, input);
+						stopListNanoTime = stopNanoSecondsTimer(startTimer);
 
+						cout << "\n" << input << " element has containing the value " << dynArrResult << ". \n";
+						//debugging
+						cout << input << " element has containing the value " << dlListResult << ". \n";
 
-						cout << "\n" << input << " element has containing the value " << result << ". \n";
-						cout << "Element found in dynamic array for " << fixed << stopDynTime << " second(s). \n";
+						cout << "\nElement found in dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
+						cout << "Element found in doubly linked list for " << fixed << stopListNanoTime << " nanosecond(s). \n";
 					}
 					else cout << "Error! Array has not contain that element\n";
 					break;
@@ -221,7 +229,7 @@ void practicalWork2() {
 
 				break;
 			}
-			cout << "End of dynamic array and doubly linked list operations. \n";
+			cout << "\nEnd of dynamic array and doubly linked list operations. \n";
 		} while (choiseNextAction());
 	} while (!ifile.is_open());
 	ifile.close();
@@ -360,7 +368,7 @@ list * createList(int size) {
 
 void fillListFromFile(ifstream * file, list * dlList)
 {
-	list * listPos = dlList;
+	list * pos = dlList;
 	do {
 		if (file->eof())
 			return;
@@ -384,21 +392,32 @@ void fillListFromFile(ifstream * file, list * dlList)
 				tNumPos++;
 			}
 
-			listPos->value = stoi(tNum);
-			listPos = listPos->after;
+			pos->value = stoi(tNum);
+			pos = pos->after;
 		}
-	} while (listPos);
+	} while (pos);
 }
 
 void printList(list *dlList)
 {
 	cout << "--- Debug ---\n";
-	list *pos;
-	pos = dlList;
+	list *pos = dlList;
 	do {
 		cout << pos->value << ' ';
 		pos = pos->after;
 	} while (pos);
 	cout << "\n--- End of Debug ---\n";
 	system("pause");
+}
+
+int getListElementByIndex(list *dlList, int index)
+{
+	list *pos = dlList;
+	do {
+		if (index == 0)
+			return pos->value;
+		else
+		pos = pos->after;
+		index--;
+	} while (pos);
 }
