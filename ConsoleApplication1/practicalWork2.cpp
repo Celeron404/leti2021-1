@@ -11,7 +11,9 @@ int countOfElements(ifstream * file);
 void fillArrayFromFile(ifstream * file, int * arr, int arrSize);
 int getArrayElement(int * arr, int size, int input);
 int * increaseArray(int * obj, int * size);
+int * decreaseArray(int * obj, int * size);
 void insertToArr(int * arr, int size, int value, int index);
+void deleteArrElement(int * arr, int size, int index);
 
 float stopSecondsTimer(time_point<steady_clock> startTimer);
 long long stopNanoSecondsTimer(time_point<steady_clock> startTimer);
@@ -78,7 +80,7 @@ void practicalWork2() {
 				cin >> input;
 				switch (input) {
 				case 1:
-					cout << "\nEnter the index of element... \n>>";
+					cout << "\nEnter the index of element... \n>> ";
 					cin >> input;
 					if ((input < numberOfElements) && (input >= 0)) {
 						startTimer = steady_clock::now();
@@ -91,7 +93,7 @@ void practicalWork2() {
 					else cout << "Error! Array has not contain that element\n";
 					break;
 				case 2:
-					cout << "\nEnter the value of element... \n>>";
+					cout << "\nEnter the value of element... \n>> ";
 					cin >> input;
 					startTimer = steady_clock::now();
 					int result = getArrayElement(dynArr, numberOfElements, input);
@@ -106,10 +108,10 @@ void practicalWork2() {
 				}
 				break;
 			case 2:
-				cout << "\nEnter the insertion value... \n>>";
+				cout << "\nEnter the insertion value... \n>> ";
 				cin >> input;
 				int inputIndex;
-				cout << "\nEnter the index of insertion... \n>>";
+				cout << "\nEnter the index of insertion... \n>> ";
 				cin >> inputIndex;
 				if ((inputIndex >= 0) && (inputIndex < numberOfElements))
 				{
@@ -118,52 +120,56 @@ void practicalWork2() {
 					insertToArr(dynArr, numberOfElements, input, inputIndex);
 					stopTimeInSeconds = stopSecondsTimer(startTimer);
 					cout << "Element has been inserted in dynamic array for " << fixed << stopTimeInSeconds << " second(s). \n";
-					/*{
-						cout << "--- Debug ---\n";
-						for (int i = 0; i < numberOfElements; i++)
-						{
-							cout << dynArr[i] << ' ';
-						}
-						cout << "\n--- End of Debug ---\n";
-						system("pause");
-					}*/
 				}
 				break;
-			//case 3:
-			//	cout << "\nTypes of deleting: \n"
-			//		<< "1) On index\n"
-			//		<< "2) On value\n"
-			//		<< "Enter option number... \n>> ";
-			//	cin >> input;
-			//	switch (input) {
-			//	case 1:
-			//		cout << "\nEnter the index of element... \n>>";
-			//		cin >> input;
-			//		if ((input < numberOfElements) && (input >= 0)) {
-			//			startTimer = steady_clock::now();
-			//			
-			//			stopTimeInSeconds = stopSecondsTimer(startTimer);
-			//			// here would be a double linked list operation
-			//			cout << "Element has been deleted from dynamic array for " << fixed << stopTimeInSeconds << " second(s). \n";
-			//		}
-			//		else cout << "Error! Array has not contain that element\n";
-			//		break;
-			//	case 2:
-			//		cout << "\nEnter the value of element... \n>>";
-			//		cin >> input;
-			//		startTimer = steady_clock::now();
-			//		
-			//		stopTimeInSeconds = stopSecondsTimer(startTimer);
-			//		// here would be a double linked list operation
-			//		if (result != -1) {
-			//			cout << "Element has been deleted from dynamic array for " << fixed << stopTimeInSeconds << " second(s). \n";
-			//		}
-			//		else cout << "Error! The element has not found. \n";
-			//		break;
-			//	}
+			case 3:
+				cout << "\nTypes of deleting: \n"
+					<< "1) On index\n"
+					<< "2) On value\n"
+					<< "Enter option number... \n>> ";
+				cin >> input;
+				switch (input) {
+				case 1:
+					cout << "\nEnter the index of element... \n>> ";
+					cin >> input;
+					if ((input < numberOfElements) && (input >= 0)) {
+						startTimer = steady_clock::now();
+						deleteArrElement(dynArr, numberOfElements, input);
+						dynArr = decreaseArray(dynArr, &numberOfElements);
+						stopTimeInSeconds = stopSecondsTimer(startTimer);
+						// here would be a double linked list operation
+						cout << "Element has been deleted from dynamic array for " << fixed << stopTimeInSeconds << " second(s). \n";
+					}
+					else cout << "Error! Array has not contain that element\n";
+					break;
+				case 2:
+					cout << "\nEnter the value of element... \n>> ";
+					cin >> input;
+					startTimer = steady_clock::now();
+					int index = getArrayElement(dynArr, numberOfElements, input);
+					if (index != -1)
+					{
+						deleteArrElement(dynArr, numberOfElements, index);
+						dynArr = decreaseArray(dynArr, &numberOfElements);
+						stopTimeInSeconds = stopSecondsTimer(startTimer);
+						// here would be a double linked list operation
+						cout << "Element has been deleted from dynamic array for " << fixed << stopTimeInSeconds << " second(s). \n";
+						/*{
+							cout << "--- Debug ---\n";
+							for (int i = 0; i < numberOfElements; i++)
+							{
+								cout << dynArr[i] << ' ';
+							}
+							cout << "\n--- End of Debug ---\n";
+							system("pause");
+						}*/
+					}
+					else cout << "Error! The element has not found. \n";
+					break;
+				}
 
 
-			//	break;
+				break;
 			}
 			cout << "End of the Task 2. \n";
 		} while (choiseNextAction());
@@ -234,6 +240,17 @@ int * increaseArray(int * obj, int * size) {
 	return obj;
 }
 
+int * decreaseArray(int * obj, int * size) {
+	int * tempObj = new int[*size - 1];
+	for (int i = 0; i < *size - 1; i++) {
+		tempObj[i] = obj[i];
+	}
+	delete[] obj;
+	obj = tempObj;
+	*size = *size - 1;
+	return obj;
+}
+
 void insertToArr(int * arr, int size, int value, int index)
 {
 	if (!arr[index])
@@ -244,6 +261,15 @@ void insertToArr(int * arr, int size, int value, int index)
 	for (int i = size - 1; i > index; i--)
 		arr[i] = arr[i - 1];
 	arr[index] = value;
+}
+
+void deleteArrElement(int * arr, int size, int index)
+{
+	if (index == (size - 1))
+		return;
+
+	for (int i = index; i < size; i++)
+		arr[i] = arr[i + 1];
 }
 
 bool isDigit(char input) {
