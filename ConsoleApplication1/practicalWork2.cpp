@@ -33,6 +33,7 @@ int getListElementByIndex(list *dlList, int index);
 int getListElementByValue(list *dlList, int value);
 list * insertToList(list *dlList, int value, unsigned index);
 void deleteListElementByIndex(list * &dlList, int index);
+void deleteListElementByValue(list * &dlList, int value);
 
 //secondary functions
 bool isDigit(char input);
@@ -203,7 +204,7 @@ void practicalWork2() {
 				cin >> input;
 				switch (input) {
 				case 1:
-					cout << "\nEnter the index of element... \n>> ";
+					cout << "\nEnter the index of the element... \n>> ";
 					cin >> input;
 					if ((input < numberOfElements) && (input >= 0))
 					{
@@ -227,7 +228,7 @@ void practicalWork2() {
 					else cout << "Error! Array has not contain that element\n";
 					break;
 				case 2:
-					cout << "\nEnter the value of element... \n>> ";
+					cout << "\nEnter the value of the element... \n>> ";
 					cin >> input;
 
 					// working with an array
@@ -241,8 +242,14 @@ void practicalWork2() {
 
 						// working with a doubly linked list
 						startTimer = steady_clock::now();
+						deleteListElementByValue(dlList, input);
+						stopListNanoTime = stopNanoSecondsTimer(startTimer);
 
 						cout << "Element has been deleted from dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
+						cout << "Element has been deleted from doubly linked list for " << fixed << stopListNanoTime << " nanosecond(s). \n";
+						// uncomment to debug
+						printArr(dynArr, numberOfElements);
+						printList(dlList);
 					}
 					else cout << "Error! The element has not found. \n";
 					break;
@@ -460,7 +467,7 @@ int getListElementByValue(list *dlList, int value)
 	return -1;
 }
 
-list * insertToList(list *dlList, int value, unsigned index)
+list * insertToList(list *dlList, int value, unsigned index) //need change an newDlList variable
 {
 	list * newDlList = new list;
 	newDlList->value = value;
@@ -528,7 +535,7 @@ list * insertToList(list *dlList, int value, unsigned index)
 void deleteListElementByIndex(list * &dlList, int index)
 {
 	list * pos = dlList;
-	if (index == 0)
+	if (index == 0) // need move to down
 	{
 		pos = dlList->after;
 		pos->before = 0;
@@ -553,12 +560,43 @@ void deleteListElementByIndex(list * &dlList, int index)
 				delete pos;
 				return;
 			}
-		pos = pos->after;
-		index--;
+		else
+		{
+			pos = pos->after;
+			index--;
+		}
 	} while (pos);
 }
 
-//void deletelistelementbyvalue(list *dllist, int index)
-//{
-//
-//}
+void deleteListElementByValue(list *&dlList, int value)
+{
+	list * pos = dlList;
+	do
+	{
+		if (pos->value == value)
+			if (pos->before == 0)
+			{
+				pos = dlList->after;
+				pos->before = 0;
+				delete dlList;
+				dlList = pos;
+				return;
+			}
+			else if (pos->after == 0)
+			{
+				pos->before->after = 0;
+				delete pos;
+				return;
+			}
+			else
+			{
+				pos->before->after = pos->after;
+				pos->after->before = pos->before;
+				delete pos;
+				return;
+			}
+		else {
+			pos = pos->after;
+		}
+	} while (pos);
+}
