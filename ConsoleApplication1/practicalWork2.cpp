@@ -528,7 +528,6 @@ list * insertToList(list *dlList, int value, unsigned index)
 void deleteListElementByIndex(list * &dlList, int index)
 {
 	list * pos = dlList;
-	// problem here
 	if (index == 0)
 	{
 		pos = dlList->after;
@@ -559,7 +558,7 @@ void deleteListElementByIndex(list * &dlList, int index)
 	} while (pos);
 }
 
-//void deleteListElementByValue(list *dlList, int index)
+//void deletelistelementbyvalue(list *dllist, int index)
 //{
 //
 //}
