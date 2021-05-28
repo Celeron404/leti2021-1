@@ -222,8 +222,8 @@ void practicalWork2() {
 						cout << "Element has been deleted from dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
 						cout << "Element has been deleted from doubly linked list for " << fixed << stopListNanoTime << " nanosecond(s). \n";
 						// uncomment to debug
-						printArr(dynArr, numberOfElements);
-						printList(dlList);
+						//printArr(dynArr, numberOfElements);
+						//printList(dlList);
 					}
 					else cout << "Error! Array has not contain that element\n";
 					break;
@@ -248,8 +248,8 @@ void practicalWork2() {
 						cout << "Element has been deleted from dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
 						cout << "Element has been deleted from doubly linked list for " << fixed << stopListNanoTime << " nanosecond(s). \n";
 						// uncomment to debug
-						printArr(dynArr, numberOfElements);
-						printList(dlList);
+						//printArr(dynArr, numberOfElements);
+						//printList(dlList);
 					}
 					else cout << "Error! The element has not found. \n";
 					break;
@@ -467,7 +467,7 @@ int getListElementByValue(list *dlList, int value)
 	return -1;
 }
 
-list * insertToList(list *dlList, int value, unsigned index) //need change an newElement variable
+list * insertToList(list *dlList, int value, unsigned index)
 {
 	list * newElement = new list;
 	newElement->value = value;
