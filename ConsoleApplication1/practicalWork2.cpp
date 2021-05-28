@@ -32,6 +32,7 @@ void printList(list *list);
 int getListElementByIndex(list *dlList, int index);
 int getListElementByValue(list *dlList, int value);
 list * insertToList(list *dlList, int value, unsigned index);
+void deleteListElementByIndex(list * &dlList, int index);
 
 //secondary functions
 bool isDigit(char input);
@@ -188,8 +189,8 @@ void practicalWork2() {
 					cout << "Element has been inserted in dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
 					cout << "Element has been inserted in doubly linked list for " << fixed << stopListNanoTime << " nanosecond(s). \n";
 					// uncomment to debug
-					printArr(dynArr, numberOfElements);
-					printList(dlList);
+					//printArr(dynArr, numberOfElements);
+					//printList(dlList);
 				}
 				else cout << "Error! Array has not contain that index!\n"
 					<< "If you need an insert after all elements, the index must be equal to the number of elements.\n";
@@ -214,8 +215,14 @@ void practicalWork2() {
 
 						// working with a doubly linked list
 						startTimer = steady_clock::now();
+						deleteListElementByIndex(dlList, input);
+						stopListNanoTime = stopNanoSecondsTimer(startTimer);
 
 						cout << "Element has been deleted from dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
+						cout << "Element has been deleted from doubly linked list for " << fixed << stopListNanoTime << " nanosecond(s). \n";
+						// uncomment to debug
+						printArr(dynArr, numberOfElements);
+						printList(dlList);
 					}
 					else cout << "Error! Array has not contain that element\n";
 					break;
@@ -518,3 +525,41 @@ list * insertToList(list *dlList, int value, unsigned index)
 //	return newDlList;
 //}
 
+void deleteListElementByIndex(list * &dlList, int index)
+{
+	list * pos = dlList;
+	// problem here
+	if (index == 0)
+	{
+		pos = dlList->after;
+		pos->before = 0;
+		delete dlList;
+		dlList = pos;
+		return;
+	}
+
+	do
+	{
+		if (index == 0)
+			if (pos->after == 0)
+			{
+				pos->before->after = 0;
+				delete pos;
+				return;
+			}
+			else
+			{
+				pos->before->after = pos->after;
+				pos->after->before = pos->before;
+				delete pos;
+				return;
+			}
+		pos = pos->after;
+		index--;
+	} while (pos);
+}
+
+//void deleteListElementByValue(list *dlList, int index)
+//{
+//
+//}
