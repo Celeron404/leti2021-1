@@ -467,10 +467,10 @@ int getListElementByValue(list *dlList, int value)
 	return -1;
 }
 
-list * insertToList(list *dlList, int value, unsigned index) //need change an newDlList variable
+list * insertToList(list *dlList, int value, unsigned index) //need change an newElement variable
 {
-	list * newDlList = new list;
-	newDlList->value = value;
+	list * newElement = new list;
+	newElement->value = value;
 
 	list *pos = dlList;
 	do {
@@ -478,24 +478,24 @@ list * insertToList(list *dlList, int value, unsigned index) //need change an ne
 		{
 			if (pos->before == 0)
 			{
-				newDlList->before = 0;
-				newDlList->after = pos;
-				pos->before = newDlList;
-				return newDlList;
+				newElement->before = 0;
+				newElement->after = pos;
+				pos->before = newElement;
+				return newElement;
 			}
 			else
 			{
-				newDlList->before = pos->before;
-				newDlList->after = pos;
-				pos->before->after = newDlList;
-				pos->before = newDlList;
+				newElement->before = pos->before;
+				newElement->after = pos;
+				pos->before->after = newElement;
+				pos->before = newElement;
 				return dlList;
 			}
 		}
 		else if ((index == 1) && (pos->after == 0)) {
-			newDlList->after = 0;
-			newDlList->before = pos;
-			pos->after = newDlList;
+			newElement->after = 0;
+			newElement->before = pos;
+			pos->after = newElement;
 			return dlList;
 		}
 		else
@@ -508,15 +508,15 @@ list * insertToList(list *dlList, int value, unsigned index) //need change an ne
 // from lesson, not worked
 //list * insertToList(list *dlList, int value, unsigned index)
 //{
-//	list * newDlList = new list;
-//	newDlList->value = value;
+//	list * newElement = new list;
+//	newElement->value = value;
 //
 //	if (!index || !dlList)
 //	{
 //		dlList->before = dlList;
-//		newDlList->before = 0;
-//		newDlList->after = dlList;
-//		dlList = newDlList;
+//		newElement->before = 0;
+//		newElement->after = dlList;
+//		dlList = newElement;
 //		return dlList;
 //	}
 //
@@ -525,29 +525,28 @@ list * insertToList(list *dlList, int value, unsigned index) //need change an ne
 //	while ((beforePos->after) && (index--))
 //		beforePos = beforePos->after;
 //
-//	newDlList->before = beforePos;
-//	newDlList->after->before = newDlList;
-//	newDlList->after = beforePos->after;
-//	beforePos->after = newDlList;
-//	return newDlList;
+//	newElement->before = beforePos;
+//	newElement->after->before = newElement;
+//	newElement->after = beforePos->after;
+//	beforePos->after = newElement;
+//	return newElement;
 //}
 
 void deleteListElementByIndex(list * &dlList, int index)
 {
 	list * pos = dlList;
-	if (index == 0) // need move to down
-	{
-		pos = dlList->after;
-		pos->before = 0;
-		delete dlList;
-		dlList = pos;
-		return;
-	}
-
 	do
 	{
 		if (index == 0)
-			if (pos->after == 0)
+			if (pos->before == 0)
+			{
+				pos = dlList->after;
+				pos->before = 0;
+				delete dlList;
+				dlList = pos;
+				return;
+			}
+			else if (pos->after == 0)
 			{
 				pos->before->after = 0;
 				delete pos;
