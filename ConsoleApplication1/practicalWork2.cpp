@@ -139,7 +139,7 @@ void practicalWork2() {
 						cout << "\nElement found in dynamic array for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
 						cout << "Element found in doubly linked list for " << fixed << stopListNanoTime << " nanosecond(s). \n";
 					}
-					else cout << "Error! Array has not contain that index\n";
+					else cout << "Error! Array has not contain that index!\n";
 					break;
 				case 2:
 					cout << "\nEnter the value of element... \n>> ";
@@ -191,7 +191,8 @@ void practicalWork2() {
 					printArr(dynArr, numberOfElements);
 					printList(dlList);
 				}
-				else cout << "Error! Array has not contain that index\n";
+				else cout << "Error! Array has not contain that index!\n"
+					<< "If you need an insert after all elements, the index must be equal to the number of elements.\n";
 				break;
 			case 3:
 				cout << "\nTypes of deleting: \n"
@@ -434,6 +435,7 @@ int getListElementByIndex(list *dlList, int index)
 		pos = pos->after;
 		index--;
 	} while (pos);
+	return 0;
 }
 
 int getListElementByValue(list *dlList, int value)
@@ -467,14 +469,6 @@ list * insertToList(list *dlList, int value, unsigned index)
 				pos->before = newDlList;
 				return newDlList;
 			}
-			//we got a problem
-			/*else if ()
-			{
-				newDlList->after = 0;
-				
-
-				return dlList;
-			}*/
 			else
 			{
 				newDlList->before = pos->before;
@@ -484,8 +478,43 @@ list * insertToList(list *dlList, int value, unsigned index)
 				return dlList;
 			}
 		}
+		else if ((index == 1) && (pos->after == 0)) {
+			newDlList->after = 0;
+			newDlList->before = pos;
+			pos->after = newDlList;
+			return dlList;
+		}
 		else
 			pos = pos->after;
 		index--;
 	} while (pos);
+	return 0;
 }
+
+// from lesson, not worked
+//list * insertToList(list *dlList, int value, unsigned index)
+//{
+//	list * newDlList = new list;
+//	newDlList->value = value;
+//
+//	if (!index || !dlList)
+//	{
+//		dlList->before = dlList;
+//		newDlList->before = 0;
+//		newDlList->after = dlList;
+//		dlList = newDlList;
+//		return dlList;
+//	}
+//
+//	list * beforePos = dlList;
+//	index--;
+//	while ((beforePos->after) && (index--))
+//		beforePos = beforePos->after;
+//
+//	newDlList->before = beforePos;
+//	newDlList->after->before = newDlList;
+//	newDlList->after = beforePos->after;
+//	beforePos->after = newDlList;
+//	return newDlList;
+//}
+
