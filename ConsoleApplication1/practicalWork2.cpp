@@ -76,6 +76,7 @@ void practicalWork2() {
 		numberOfElements = countOfElements(pifile);
 		if (numberOfElements == 0) {
 			cout << "Error! No elements founds.\n";
+			system("pause");
 			continue;
 		}
 
