@@ -106,13 +106,21 @@ void practicalWork2() {
 
 		do {
 			cout << "\n\tDynamic array and doubly linked list operations. \n"
+				<< "0) Printing the array\n"
 				<< "1) Getting and element\n"
 				<< "2) Element insertion\n"
 				<< "3) Deleting an element\n"
+				<< "4) Additional option: randomly increacing the elements of the dynamic array (values from 0 to 5) and adding all positive elements to the doubly linked array\n"
 				<< "Enter option number... \n>> ";
 			int input;
 			cin >> input;
 			switch (input) {
+			case 0:
+				cout << endl;
+				printArr(dynArr, numberOfElements);
+				// uncomment to debug
+				//printList(dlList);
+				break;
 			case 1:
 				cout << "\nTypes of getting: \n"
 					<< "1) On index\n"
@@ -255,11 +263,36 @@ void practicalWork2() {
 					else cout << "Error! The element has not found. \n";
 					break;
 				}
+			case 4:
+				cout << "\nFirst step in progress...\n";
+				for (int i = 0; i < numberOfElements; i++)
+				{
+					int t = rand() % 6;
+					// uncomment to debug
+					//cout << t << ' ';
+					dynArr[i] += t;
+				}
+				cout << "Array after randomly increacing the elements (values from 0 to 5):\n";
+				printArr(dynArr, numberOfElements);
 
+				startTimer = steady_clock::now();
+				cout << "\nSecond step in progress...\n";
+				int addPos = numberOfElements; // for the adding to the end of list
+				for (int i = 0; i < numberOfElements; i++)
+				{
+					if (dynArr[i] > 0)
+					{
+						dlList = insertToList(dlList, dynArr[i], addPos);
+						addPos++;
+					}
+				}
+				stopListNanoTime = stopNanoSecondsTimer(startTimer);
+				cout << "Second step has been done for " << fixed << stopDynNanoTime << " nanosecond(s). \n";
 
+				printList(dlList);
 				break;
 			}
-			cout << "\nEnd of dynamic array and doubly linked list operations. \n";
+			cout << "\nEnd of dynamic array and doubly linked list operations.";
 		} while (choiseNextAction());
 	} while (!ifile.is_open());
 	ifile.close();
@@ -272,8 +305,9 @@ int countOfElements(ifstream * file)
 	while (std::getline(*file, t)) {
 		if (t.length() > 1)
 			for (unsigned i = 0; i < static_cast<unsigned>(t.length() - 1); i++)
-				if (((t[i] == ' ') || (t[i] == '\t')) && (isDigit(t[i + 1])))
-					count++;					// Counting the number of "spaces/tabs+digits"
+				if (((t[i] == ' ') || (t[i] == '\t'))
+					&& ((isDigit(t[i + 1])) || (t[i+1] == '-')))
+					count++;					// Counting the number of "spaces/tabs+digits/minuses"
 		count++;								// counting the number of linebreakes
 	}
 	return count;
@@ -367,12 +401,12 @@ void deleteArrElement(int * arr, int size, int index)
 
 void printArr(int * arr, int size)
 {
-	cout << "--- Debug ---\n";
+	cout << "Printing the array...\n";
 	for (int i = 0; i < size; i++)
 	{
 		cout << arr[i] << ' ';
 	}
-	cout << "\n--- End of Debug ---\n";
+	cout << "\nEnd of the array.\n";
 	system("pause");
 }
 
@@ -430,13 +464,13 @@ void fillListFromFile(ifstream * file, list * dlList)
 
 void printList(list *dlList)
 {
-	cout << "--- Debug ---\n";
+	cout << "Printing the list...\n";
 	list *pos = dlList;
 	do {
 		cout << pos->value << ' ';
 		pos = pos->after;
 	} while (pos);
-	cout << "\n--- End of Debug ---\n";
+	cout << "\nEnd of the list.\n";
 	system("pause");
 }
 
