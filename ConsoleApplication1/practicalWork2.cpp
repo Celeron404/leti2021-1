@@ -263,6 +263,7 @@ void practicalWork2() {
 					else cout << "Error! The element has not found. \n";
 					break;
 				}
+				break;
 			case 4:
 				cout << "\nFirst step in progress...\n";
 				for (int i = 0; i < numberOfElements; i++)
