@@ -41,7 +41,12 @@ void practicalWork3() {
 		cin >> input;
 
 		if (isExpression(input))
-			toExpression(&input);
+			//remove spaces
+			for (int i = 0; i < input.length(); i++)
+			{
+				if (input[i] == ' ')
+					input.erase(i, 1);
+			}
 		else {
 			cout << "Input contains wrong symbols. \n" <<
 				"Correct symbols: + - * / ( ) \"space\" 0-9 a-z A-Z \n" <<
@@ -49,7 +54,7 @@ void practicalWork3() {
 			continue;
 		}
 
-		bool checkExpr = expressionIsCorrect();
+		bool checkExpr = expressionIsCorrect(input, exprType);
 	} while (!inputIsCorrect);
 	system("pause");
 }
@@ -61,10 +66,8 @@ bool isExpression(string input) {
 	true;
 }
 
-void toExpression(string * input) {
-
-}
-
 bool expressionIsCorrect(string input, short exprType) {
-
+	switch (exprType) {
+	case 1:
+	}
 }
