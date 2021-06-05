@@ -155,6 +155,7 @@
     <ClCompile Include="consoleInterface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="practicalWork2.cpp" />
+    <ClCompile Include="practicalWork3.cpp" />
     <ClCompile Include="timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

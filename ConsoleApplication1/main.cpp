@@ -35,6 +35,7 @@ struct student {
 
 void practicalWork1();
 void practicalWork2();
+void practicalWork3();
 
 int countOfElements(ifstream * file);	// функции определены в другом файле
 
@@ -74,6 +75,7 @@ int main() {
 			cout << "Practical works: \n" <<
 				"\t1) Structures \n" <<
 				"\t2) Dynamic Massives and Doubly Linked Lists \n" <<
+				"\t3) Stacks and queues, direct and reverse polish notation \n" <<
 				"Enter the number of practical work or enter 0 for close the program... \n>> ";
 			int input;
 			cin >> input;
@@ -83,6 +85,9 @@ int main() {
 				break;
 			case 2:
 				practicalWork2();
+				break;
+			case 3:
+				practicalWork3();
 				break;
 			default:
 				goto Exit;
