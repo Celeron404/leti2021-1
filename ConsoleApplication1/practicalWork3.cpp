@@ -3,7 +3,9 @@
 #include <regex>
 using namespace std;
 
-void expressionCheck(string input);
+void removeSpacesFromString(string &input);
+void expressionPrimaryCheck(string input);
+void expressionSecondaryCheck(string input);
 bool bracketCheck(string input);
 
 void practicalWork3() {
@@ -43,17 +45,13 @@ void practicalWork3() {
 		string input;
 		//cin >> input;
 		
+
 		getline(cin, input);
 
 		try {
-			expressionCheck(input);
-				
-			//remove spaces
-				for (int i = 0; i < input.length(); i++)
-				{
-					if (input[i] == ' ')
-						input.erase(i, 1);
-				}
+			expressionPrimaryCheck(input);
+			removeSpacesFromString(input);
+			expressionSecondaryCheck(input);
 		}
 		catch (const char* msg) {
 			cout << msg;
@@ -76,10 +74,18 @@ void practicalWork3() {
 	system("pause");
 }
 
-void expressionCheck(string input) {
+void removeSpacesFromString(string &input) {
+	for (int i = 0; i < input.length(); i++)
+	{
+		if (input[i] == ' ')
+			input.erase(i, 1);
+	}
+}
+
+void expressionPrimaryCheck(string input) {
 	//searching incorrect symbols
-	regex mask1("[^A-Za-z0-9\\s\\+\\-\\*\\/\\(\\)]"); 
-	if (std::regex_search(input, mask1))
+	regex mask("[^A-Za-z0-9\\s\\+\\-\\*\\/\\(\\)]");
+	if (std::regex_search(input, mask))
 		/*
 		Error! Input contains wrong symbols.
 		Correct symbols: + - * / ( ) \"space\" 0-9 a-z a-z
@@ -88,35 +94,59 @@ void expressionCheck(string input) {
 		throw "Error! Input contains wrong symbols. \nCorrect symbols: + - * / ( ) \"space\" 0-9 a-z a-z \nPlease, repeat input.\n";
 
 	//searching incorrect sequence of characters
-	mask1 = "[A-Za-z\\+\\-\\*\\/]{2}"; // "+--*/++--**// xx yy" sequences
-	if (std::regex_search(input, mask1))
+	mask = "[A-Za-z0-9]\\s[A-Za-z0-9]"; // "11 4 x y" sequences
+	if (std::regex_search(input, mask))
 		/*
 		Error! Input contains wrong sequence of characters.
-		Correct example: (x + 3) * Y
+		Correct example: (x * y + 3 * 4) * y
+		Incorrect sequences example: (x y + 3 4) * Y
+		Please, repeat input.
+		*/
+		throw "Error! Input contains wrong sequence of characters. \nCorrect example: (x + 3) * y\nIncorrect sequences example: +--*/++--**// xx yy \nPlease, repeat input.\n";
+}
+
+void expressionSecondaryCheck(string input) {
+	//searching incorrect sequence of characters
+	regex mask("[A-Za-z\\+\\-\\*\\/]{2}"); // "+--*/++--**// xx yy" sequences
+	if (std::regex_search(input, mask))
+		/*
+		Error! Input contains wrong sequence of characters.
+		Correct example: (x + 3) * y
 		Incorrect sequences example: +--* /++--** // xx yy
 		Please, repeat input.
 		*/
-		throw "Error! Input contains wrong sequence of characters. \nCorrect example: (x + 3) * Y\nIncorrect sequences example: +--*/++--**// xx yy \nPlease, repeat input.\n";
+		throw "Error! Input contains wrong sequence of characters. \nCorrect example: (x + 3) * y\nIncorrect sequences example: +--*/++--**// xx yy \nPlease, repeat input.\n";
 
-	mask1 = "([A-Za-z0-9]\\()|(\\)[A-Za-z0-9])|(\\(\\))"; // "() 5( )5 x( )x Y( )Y" sequences
-	if (std::regex_search(input, mask1))
+	mask = "([A-Za-z0-9]\\()|(\\)[A-Za-z0-9])|(\\(\\))"; // "() 5( )5 x( )x Y( )Y" sequences
+	if (std::regex_search(input, mask))
 		/*
 		Error! Input contains wrong sequence of characters.
-		Correct example: (x + 3) * Y
+		Correct example: (x + 3) * y
 		Incorrect sequences example: () 5( )5 x( )x Y( )Y
 		Please, repeat input.
 		*/
-		throw "Error! Input contains wrong sequence of characters. \nCorrect example: (x + 3) * Y\nIncorrect sequences example: () 5( )5 x( )x Y( )Y \nPlease, repeat input.\n";
+		throw "Error! Input contains wrong sequence of characters. \nCorrect example: (x + 3) * y\nIncorrect sequences example: () 5( )5 x( )x Y( )Y \nPlease, repeat input.\n";
 	
+	//searching the operators in begin and end of the expression
+	mask = "^[\\+\\*\\/]|[\\+\\-\\*\\/]$";
+	if (std::regex_search(input, mask))
+		/*
+		Error! Input contains operators in begin or end of the expression.
+		Correct example: x + 3 * y
+		Incorrect example: *x + 3 * y-
+		Please, repeat input.
+		*/
+		throw "Error! Input contains operators in begin or end of the expression. \nCorrect example: x + 3 * y\nIncorrect example: *x + 3 * Y- \nPlease, repeat input.\n";
+
 	//counting opened and closed brackets
 	if (!bracketCheck(input))
 		/*
 		Error! The number of opening brackets does not match the number of closing brackets.
-		Correct example: (x + (3 - 1)) * Y
-		Incorrect example: (x + (3 - q) * Y
+		Correct example: (x + (3 - 1)) * y
+		Incorrect example: (x + (3 - q) * y
 		Please, repeat input.
 		*/
-		throw "Error! The number of opening brackets does not match the number of closing brackets. \nCorrect example: (x + (3 - 1)) * Y\nIncorrect example: (x + (3 - q) * Y \nPlease, repeat input.\n";
+		throw "Error! The number of opening brackets does not match the number of closing brackets. \nCorrect example: (x + (3 - 1)) * y\nIncorrect example: (x + (3 - q) * Y \nPlease, repeat input.\n";
 }
 
 bool bracketCheck(string input) {
