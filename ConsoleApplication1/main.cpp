@@ -97,7 +97,7 @@ int main() {
 			if (exception == -1)
 				goto Exit;
 		}
-		catch (...) {}
+		//catch (...) {}
 	}
 Exit:
 	cout << "\nClosing the program... \n";
