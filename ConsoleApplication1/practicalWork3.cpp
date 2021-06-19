@@ -75,7 +75,7 @@ void practicalWork3() {
 }
 
 void removeSpacesFromString(string &input) {
-	for (int i = 0; i < input.length(); i++)
+	for (unsigned i = 0; i < input.length(); i++)
 	{
 		if (input[i] == ' ')
 			input.erase(i, 1);
@@ -152,7 +152,7 @@ void expressionSecondaryCheck(string input) {
 bool bracketCheck(string input) {
 	int openedBracket = 0;
 	int closedBracket = 0;
-	for (int i = 0; i < input.length(); i++)
+	for (unsigned i = 0; i < input.length(); i++)
 	{
 		if (input[i] == '(')
 			openedBracket++;
