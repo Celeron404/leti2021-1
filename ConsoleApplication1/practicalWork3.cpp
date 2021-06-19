@@ -146,7 +146,7 @@ void expressionSecondaryCheck(string input) {
 		Incorrect example: (1 + (3 - 4) * 4
 		Please, repeat input.
 		*/
-		throw "Error! The number of opening brackets does not match the number of closing brackets. \nCorrect example: (1 + (3 - 1)) * 4\nIncorrect example: (1 + (3 - q) * 4 \nPlease, repeat input.\n";
+		throw "Error! The number of opening brackets does not match the number of closing brackets. \nCorrect example: (1 + (3 - 1)) * 4\nIncorrect example: (1 + (3 - 4) * 4 \nPlease, repeat input.\n";
 }
 
 bool bracketCheck(string input) {
