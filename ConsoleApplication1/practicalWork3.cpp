@@ -75,11 +75,17 @@ void practicalWork3() {
 }
 
 void removeSpacesFromString(string &input) {
-	for (unsigned i = 0; i < input.length(); i++)
-	{
-		if (input[i] == ' ')
-			input.erase(i, 1);
-	}
+	bool isRemoved;
+	do {
+		isRemoved = false;
+		for (unsigned i = 0; i < input.length(); i++)
+		{
+			if (input[i] == ' ') {
+				input.erase(i, 1);
+				isRemoved = true;
+			}
+		}
+	} while (isRemoved);
 }
 
 void expressionPrimaryCheck(string input) {
@@ -94,7 +100,7 @@ void expressionPrimaryCheck(string input) {
 		throw "Error! Input contains wrong symbols. \nCorrect symbols: + - * / ( ) \"space\" 0-9 \nPlease, repeat input.\n";
 
 	//searching incorrect sequence of characters
-	mask = "[0-9]\\s[0-9]"; // "11 4 x y" sequences
+	mask = "[0-9]\\s+[0-9]"; // "11 4" sequences
 	if (std::regex_search(input, mask))
 		/*
 		Error! Input contains wrong sequence of characters.
@@ -102,7 +108,7 @@ void expressionPrimaryCheck(string input) {
 		Incorrect sequences example: (1 4 + 3 4) * 4
 		Please, repeat input.
 		*/
-		throw "Error! Input contains wrong sequence of characters. \nCorrect example: (1 + 3) * 4\nIncorrect sequences example: +--*/++--**// \nPlease, repeat input.\n";
+		throw "Error! Input contains wrong sequence of characters. \nCorrect example: (1 + 3) * 4\nIncorrect sequences example: +--*/++--**// 11 4 (space between numbers and characters)\nPlease, repeat input.\n";
 }
 
 void expressionSecondaryCheck(string input) {
