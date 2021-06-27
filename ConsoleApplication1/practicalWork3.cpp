@@ -1,77 +1,137 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <regex>
 using namespace std;
+
+typedef struct Stack* pStack;
+struct Stack {
+	char data;
+	pStack next;
+};
+
+void push(pStack* stackp, char data);
+void pop(pStack* stackp);
+int sizeOfStack(const pStack * stackp);
 
 void removeSpacesFromString(string &input);
 void expressionPrimaryCheck(string input);
 void expressionSecondaryCheck(string input);
 bool bracketCheck(string input);
+string simpleToRevertPolish(string input);
+short operatorPriority(char input);
+bool isOperator(char input);
+
+
 
 void practicalWork3() {
 	system("CLS");
 	cout << "Solution of task \"Working with stacks and queues, learning direct and reverse polish notation.\n";
+
 	bool inputIsCorrect = false;
 	short exprType;
+	string userEntered;
+	string input;
 	do {
-		cout << "\nEnter the type of expression:\n"
-			<< "1) Simple notation\n"
-			<< "2) Direct polish notation\n"
-			<< "3) Reverse polish notation\n>> ";
-		cin >> exprType;
-		if (exprType == 1 || exprType == 2 || exprType == 3) {
-			inputIsCorrect = true;
-			break;
+		// selecting the type of expression
+		do {
+			cout << "\nSelect the type of expression:\n"
+				<< "1) Simple notation\n"
+				<< "2) Direct polish notation\n"
+				<< "3) Reverse polish notation\n>> ";
+			cin >> exprType;
+			if (exprType == 1 || exprType == 2 || exprType == 3) {
+				inputIsCorrect = true;
+				break;
+			}
+			else
+				cout << "Error: wrong input. Please repeat menu selection.\n";
+		} while (!inputIsCorrect);
+
+		// selecting an input method
+		inputIsCorrect = false;
+		short inputMethod;
+		do {
+			cout << "\nSelect an input method:\n"
+				<< "1) File\n"
+				<< "2) Keyboard\n";
+			cin >> inputMethod;
+			if (inputMethod == 1) {
+				inputIsCorrect = true;
+				break;
+			}
+			else if (inputMethod == 2) {
+				inputIsCorrect = true;
+				break;
+			}
+			else
+				cout << "Error: wrong input. Please repeat menu selection.\n";
+		} while (!inputIsCorrect);
+
+		// entering the expression (or reading file)
+		inputIsCorrect = false;
+		if (inputMethod == 1) {
+			ifstream ifile;
+			string path;
+			cout << "Enter the path to the file. \n"
+				<< "Only english words in the file and path! Example: C:\\anime\\students.txt \n>> ";
+			cin.ignore(32767, '\n');
+			getline(cin, path);
+			ifile.open(path);
+			if (!ifile.is_open()) {
+				cout << "Error opening file! Please restart the program! \n";
+				throw - 1;
+			}
+			else
+				getline(ifile, userEntered);
 		}
-		cout << "Error: wrong input. Please repeat menu selection.\n";
-	} while (!inputIsCorrect);
+		else {
+			cin.ignore(32767, '\n');
+			cout << "\nEnter the expression. Example: ";
+			switch (exprType) {
+			case 1:
+				cout << "(1 + 3) * 4";
+				break;
+			case 2:
+				cout << "* + 1 3 4";
+				break;
+			case 3:
+				cout << "1 3 + 4 *";
+				break;
+			}
+			cout << "\n>> ";
 
-	// enter and checking
-	inputIsCorrect = false;
-	cin.ignore(32767, '\n');
-	do {
-		cout << "\nEnter the expression. Example: ";
-		switch (exprType) {
-		case 1:
-			cout << "(1 + 3) * 4";
-			break;
-		case 2:
-			cout << "* + 1 3 4";
-			break;
-		case 3:
-			cout << "1 3 + 4 *";
+			getline(cin, userEntered);
 		}
-		cout << "\n>> ";
-		string input;
-		//cin >> input;
-		
 
-		getline(cin, input);
-
+		// checking the expression
+		input = userEntered;
 		try {
-			expressionPrimaryCheck(input);
-			removeSpacesFromString(input);
-			expressionSecondaryCheck(input);
+			switch (exprType) {
+			case 1:
+				expressionPrimaryCheck(input);
+				removeSpacesFromString(input);
+				expressionSecondaryCheck(input);
+				cout << simpleToRevertPolish(input) << endl;
+				break;
+			case 2:
+
+				break;
+			case 3:
+
+				break;
+			}
 		}
 		catch (const char* msg) {
 			cout << msg;
 			continue;
 		}
-
-		/*else {
-			cout << "input contains wrong symbols. \n" <<
-				"correct symbols: + - * / ( ) \"space\" 0-9 \n" <<
-				"please, repeat input\n";
-			continue;
-		}*/
-
-		
-		cout << "-- Debugging --\n"
-			<< input << endl;
-		system("pause");
-
+		inputIsCorrect = true;
+		if (inputIsCorrect) {
+			cout << "Input is correct.\n";
+			system("pause");
+		}
 	} while (!inputIsCorrect);
-	system("pause");
 }
 
 void removeSpacesFromString(string &input) {
@@ -132,7 +192,7 @@ void expressionSecondaryCheck(string input) {
 		Please, repeat input.
 		*/
 		throw "Error! Input contains wrong sequence of characters. \nCorrect example: (1 + 3) * 4\nIncorrect sequences example: () 5( )5 \nPlease, repeat input.\n";
-	
+
 	//searching the operators in begin and end of the expression
 	mask = "^[\\+\\*\\/]|[\\+\\-\\*\\/]$";
 	if (std::regex_search(input, mask))
@@ -170,3 +230,90 @@ bool bracketCheck(string input) {
 	else
 		return false;
 }
+
+string simpleToRevertPolish(string input) {
+	string result;
+	pStack stackP = NULL;
+
+	for (int i = 0; i < input.length(); i++) {
+		if (input[i] == '(') {
+			push(&stackP, input[i]);
+			continue;
+		}
+
+		if (!isOperator(input[i])) {
+			result += input[i];
+			result += ' ';
+			continue;
+		}
+
+		if (input[i] == ')') {
+			char pos = ' ';
+			while (pos != '(') {
+				pos = stackP->data;
+				pop(&stackP);
+				if (pos != '(') {
+					result += pos;
+					result += ' ';
+				}
+			}
+			continue;
+		}
+
+		if (sizeOfStack(&stackP) != 0)
+			while (operatorPriority(stackP->data) >= operatorPriority(input[i])) {
+				result += stackP->data;
+				result += ' ';
+				pop(&stackP);
+				if (sizeOfStack(&stackP) == 0)
+					break;
+			}
+
+		if (sizeOfStack(&stackP) == 0) {
+			push(&stackP, input[i]);
+			continue;
+		}
+
+		if (operatorPriority(stackP->data) < operatorPriority(input[i])) {
+			push(&stackP, input[i]);
+			continue;
+		}
+	}
+
+	while (sizeOfStack(&stackP) != 0) {
+		result += stackP->data;
+		result += ' ';
+		pop(&stackP);
+	}
+
+	// delete last ' ' symbol
+	result.erase(result.length() - 1);
+
+	return result;
+}
+
+short operatorPriority(char input) {
+	switch (input) {
+	case '(':
+		return 1;
+	case '+': case '-':
+		return 2;
+	case '*': case '/':
+		return 3;
+	default:
+		return 0;
+	}
+}
+
+bool isOperator(char input) {
+	if (input == '+'
+		|| input == '-'
+		|| input == '*'
+		|| input == '/'
+		|| input == ')'
+		|| input == '(')
+		return true;
+	else
+		return false;
+}
+
