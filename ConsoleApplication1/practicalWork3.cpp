@@ -27,12 +27,14 @@ void removeSpacesFromString(string &input);
 void expressionPrimaryCheck(string input);
 void expressionSecondaryCheck(string input);
 bool bracketCheck(string input);
+bool polishExpressionCheck(string input);
 
 // polish notations
 string simpleToRevert(string input);
 string simpleToDirect(string input);
 short operatorPriority(char input);
 bool isOperator(char input);
+bool isDigit(char input);
 
 void practicalWork3() {
 	system("CLS");
@@ -63,7 +65,7 @@ void practicalWork3() {
 		do {
 			cout << "\nSelect an input method:\n"
 				<< "1) File\n"
-				<< "2) Keyboard\n";
+				<< "2) Keyboard\n>> ";
 			cin >> inputMethod;
 			if (inputMethod == 1) {
 				inputIsCorrect = true;
@@ -125,10 +127,10 @@ void practicalWork3() {
 				expressionSecondaryCheck(input);
 				break;
 			case 2:
-
+				polishExpressionCheck(input);
 				break;
 			case 3:
-
+				polishExpressionCheck(input);
 				break;
 			}
 		}
@@ -277,30 +279,51 @@ bool bracketCheck(string input) {
 		return false;
 }
 
-//bool polishExpressionCheck(string input) {
-//	//searching incorrect symbols
-//	regex mask("[^0-9\\s\\+\\-\\*\\/]");
-//	if (std::regex_search(input, mask))
-//		/*
-//		Error! Input contains wrong symbols.
-//		Correct symbols: + - * / \"space\" 0-9
-//		Brackets are incorrect!
-//		Please, repeat input
-//		*/
-//		throw "Error! Input contains wrong symbols. \nCorrect symbols: + - * / \"space\" 0-9 \nBrackets are incorrect! \nPlease, repeat input.\n";
-//
-//	//counting operators and operands
-//	int operators = 0, operands = 0, digits = 0;
-//	for (int i = 0; i < input.size(); i++) {
-//		if (input[i] != ' ')
-//			if (isOperator(input[i])) {
-//				operators++;
-//				digits = 0;
-//			}
-//			else
-//				
-//	}
-//}
+bool polishExpressionCheck(string input) {
+	//searching incorrect symbols
+	regex mask("[^0-9\\s\\+\\-\\*\\/]");
+	if (std::regex_search(input, mask))
+		/*
+		Error! Input contains wrong symbols.
+		Correct symbols: + - * / \"space\" 0-9
+		Brackets are incorrect!
+		Please, repeat input
+		*/
+		throw "Error! Input contains wrong symbols. \nCorrect symbols: + - * / \"space\" 0-9 \nBrackets are incorrect! \nPlease, repeat input.\n";
+
+	//counting operators and operands
+	int operators = 0, operands = 0, digits = 0;
+	for (int i = 0; i < input.size(); i++) {
+		if (isDigit(input[i])) {
+			digits++;
+			continue;
+		}
+
+		if (input[i] == ' ')
+			if (digits > 0) {
+				operands++;
+				digits = 0;
+			}
+
+		if (isOperator(input[i])) {
+			//if (input[i] != '-')
+			operators++;
+
+			//counting operands
+			if (digits > 0) {
+				operands++;
+				digits = 0;
+			}
+			continue;
+		}
+	}
+	if (operators > operands)
+		/*
+		Error! Input contains operators more than operands!
+		This program not working correctly with negative numbers and operators besause i don't get paid for this job.
+		*/
+		throw "Error! Input contains operators more than operands! \nThis program not working correctly with negative numbers and operators besause i don't get paid for this job.";
+}
 
 string simpleToRevert(string input) {
 	string result;
@@ -387,7 +410,7 @@ string simpleToDirect(string input) {
 
 	result = simpleToRevert(result);
 	size = result.size();
-	free(temp);
+	delete temp;
 	temp = new char[size + 1];
 	//flip the string again
 	for (int i = 0, j = size - 1; i < size; i++, j--) {
@@ -396,7 +419,7 @@ string simpleToDirect(string input) {
 	temp[size] = '\0';
 
 	result = temp;
-	free(temp);
+	delete temp;
 	
 	return result;
 }
@@ -425,3 +448,11 @@ bool isOperator(char input) {
 	else
 		return false;
 }
+
+//bool isDigit(char input) {
+//	for (int i = 0; i < 9; i++) {
+//		if (input == i)
+//			return true;
+//	}
+//	false;
+//}
