@@ -4,25 +4,35 @@
 #include <regex>
 using namespace std;
 
-typedef struct Stack* pStack;
-struct Stack {
+typedef struct charStack* pCharStack;
+struct charStack {
 	char data;
-	pStack next;
+	pCharStack next;
 };
 
-void push(pStack* stackp, char data);
-void pop(pStack* stackp);
-int sizeOfStack(const pStack * stackp);
+typedef struct stringStack* pStringStack;
+struct stringStack {
+	string data;
+	pStringStack next;
+};
+
+void push(pCharStack* stackp, char data);
+void pop(pCharStack* stackp);
+int sizeOfStack(const pCharStack * stackp);
+void push(pStringStack* stackp, string data);
+void pop(pStringStack* stackp);
+int sizeOfStack(const pStringStack * stackp);
 
 void removeSpacesFromString(string &input);
 void expressionPrimaryCheck(string input);
 void expressionSecondaryCheck(string input);
 bool bracketCheck(string input);
-string simpleToRevertPolish(string input);
+
+// polish notations
+string simpleToRevert(string input);
+string simpleToDirect(string input);
 short operatorPriority(char input);
 bool isOperator(char input);
-
-
 
 void practicalWork3() {
 	system("CLS");
@@ -30,8 +40,7 @@ void practicalWork3() {
 
 	bool inputIsCorrect = false;
 	short exprType;
-	string userEntered;
-	string input;
+	string userEntered, input;
 	do {
 		// selecting the type of expression
 		do {
@@ -82,8 +91,10 @@ void practicalWork3() {
 				cout << "Error opening file! Please restart the program! \n";
 				throw - 1;
 			}
-			else
+			else {
 				getline(ifile, userEntered);
+				ifile.close();
+			}
 		}
 		else {
 			cin.ignore(32767, '\n');
@@ -112,7 +123,6 @@ void practicalWork3() {
 				expressionPrimaryCheck(input);
 				removeSpacesFromString(input);
 				expressionSecondaryCheck(input);
-				cout << simpleToRevertPolish(input) << endl;
 				break;
 			case 2:
 
@@ -131,6 +141,43 @@ void practicalWork3() {
 			cout << "Input is correct.\n";
 			system("pause");
 		}
+
+		// conversion the expression into other types of notation
+		switch (exprType) {
+		case 1:
+			cout << "Entered expression in the Direct Polish Notation: \n\t"
+				<< simpleToDirect(input) << endl;
+			cout << "Entered expression in the Reverse Polish Notation: \n\t"
+				<< simpleToRevert(input) << endl;
+			break;
+		case 2:
+			cout << "Entered expression in the Simple Notation: \n\t"
+				<< endl;
+			cout << "Entered expression in the Reverse Polish Notation: \n\t"
+				<< simpleToRevert(input) << endl;
+			break;
+		case 3:
+			cout << "Entered expression in the Simple Notation: \n\t"
+				<< endl;
+			cout << "Entered expression in the Direct Polish Notation: \n\t"
+				<< endl;
+			break;
+		}
+		system("pause");
+
+		//calculating
+		switch (exprType) {
+		case 1:
+
+			break;
+		case 2:
+
+			break;
+		case 3:
+
+			break;
+		}
+
 	} while (!inputIsCorrect);
 }
 
@@ -216,8 +263,7 @@ void expressionSecondaryCheck(string input) {
 }
 
 bool bracketCheck(string input) {
-	int openedBracket = 0;
-	int closedBracket = 0;
+	int openedBracket = 0, closedBracket = 0;
 	for (unsigned i = 0; i < input.length(); i++)
 	{
 		if (input[i] == '(')
@@ -231,9 +277,34 @@ bool bracketCheck(string input) {
 		return false;
 }
 
-string simpleToRevertPolish(string input) {
+//bool polishExpressionCheck(string input) {
+//	//searching incorrect symbols
+//	regex mask("[^0-9\\s\\+\\-\\*\\/]");
+//	if (std::regex_search(input, mask))
+//		/*
+//		Error! Input contains wrong symbols.
+//		Correct symbols: + - * / \"space\" 0-9
+//		Brackets are incorrect!
+//		Please, repeat input
+//		*/
+//		throw "Error! Input contains wrong symbols. \nCorrect symbols: + - * / \"space\" 0-9 \nBrackets are incorrect! \nPlease, repeat input.\n";
+//
+//	//counting operators and operands
+//	int operators = 0, operands = 0, digits = 0;
+//	for (int i = 0; i < input.size(); i++) {
+//		if (input[i] != ' ')
+//			if (isOperator(input[i])) {
+//				operators++;
+//				digits = 0;
+//			}
+//			else
+//				
+//	}
+//}
+
+string simpleToRevert(string input) {
 	string result;
-	pStack stackP = NULL;
+	pCharStack stackP = NULL;
 
 	for (int i = 0; i < input.length(); i++) {
 		if (input[i] == '(') {
@@ -292,6 +363,44 @@ string simpleToRevertPolish(string input) {
 	return result;
 }
 
+string simpleToDirect(string input) {
+	string result = input;
+	int size = input.size();
+	//flip the string
+	char * temp = new char[size + 1];
+	for (int i = 0, j = size-1; i < size; i++, j--) {
+		temp[i] = input[j];
+	}
+	temp[size] = '\0';
+	result = temp;
+
+	//brackets flipping
+	for (int i = 0; i < size; i++) {
+		if (result[i] == '(' || result[i] == ')') {
+			if (result[i] == '(')
+				result[i] = ')';
+			else
+				result[i] = '(';
+			i++;
+		}
+	}
+
+	result = simpleToRevert(result);
+	size = result.size();
+	free(temp);
+	temp = new char[size + 1];
+	//flip the string again
+	for (int i = 0, j = size - 1; i < size; i++, j--) {
+		temp[i] = result[j];
+	}
+	temp[size] = '\0';
+
+	result = temp;
+	free(temp);
+	
+	return result;
+}
+
 short operatorPriority(char input) {
 	switch (input) {
 	case '(':
@@ -316,4 +425,3 @@ bool isOperator(char input) {
 	else
 		return false;
 }
-
