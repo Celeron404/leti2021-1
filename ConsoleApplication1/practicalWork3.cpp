@@ -113,7 +113,7 @@ void practicalWork3() {
 			if (inputMethod == 2) {
 				ifstream ifile;
 				string path;
-				cout << "Enter the path to the file. \n"
+				cout << "\nEnter the path to the file. \n"
 					<< "Only english words in the file and path! Example: C:\\anime\\gachi.txt \n>> ";
 				cin.ignore(32767, '\n');
 				getline(cin, path);
