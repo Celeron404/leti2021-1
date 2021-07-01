@@ -2,7 +2,8 @@
 #include <string>
 #include <fstream>
 #include <regex>
-#include <Windows.h> // Ќужно дл€ получени€ координат консоли и их изменени€
+#include <iomanip> // for cout setprecision
+//#include <Windows.h> // for set coursor coordinates
 using namespace std;
 
 typedef struct charStack* pCharStack;
@@ -23,6 +24,12 @@ struct intStack {
 	pIntStack next;
 };
 
+typedef struct floatStack * pFloatStack;
+struct floatStack {
+	float data;
+	pFloatStack next;
+};
+
 void push(pCharStack * stackp, char data);
 void pop(pCharStack * stackp);
 int sizeOfStack(const pCharStack * stackp);
@@ -32,6 +39,9 @@ int sizeOfStack(const pStringStack * stackp);
 void push(pIntStack * stackp, int data);
 void pop(pIntStack * stackp);
 int sizeOfStack(const pIntStack * stackp);
+void push(pFloatStack* stackp, float data);
+void pop(pFloatStack* stackp);
+int sizeOfStack(const pFloatStack * stackp);
 
 void removeSpacesFromString(string &input);
 void expressionPrimaryCheck(string input);
@@ -42,7 +52,7 @@ bool polishExpressionCheck(string input);
 // polish notations
 string simpleToRevert(string input);
 string simpleToDirect(string input);
-int calculate(string input);
+float revertCalculating(string input);
 short operatorPriority(char input);
 bool isOperator(char input);
 bool isDigit(char input);
@@ -188,17 +198,17 @@ void practicalWork3() {
 			}
 
 			cout << "Calculating entered expression: \n";
-			int result;
+			float result;
 			try {
 				switch (exprType) {
 				case 1:
-					result = calculate(convertedExpression);
+					result = revertCalculating(convertedExpression);
 					break;
 				case 2:
 
 					break;
 				case 3:
-					calculate(input);
+					revertCalculating(input);
 					break;
 				}
 			}
@@ -214,7 +224,7 @@ void practicalWork3() {
 			//GetConsoleScreenBufferInfo(hConsole, &bi);
 			//bi.dwCursorPosition.X += 10;
 			//SetConsoleCursorPosition(hConsole, bi.dwCursorPosition);			
-			cout << result << endl;
+			cout << fixed << setprecision(std::numeric_limits<float>::digits10 + 1) << result << endl;
 		} while (!inputIsCorrect);
 
 	} while (choiseNextAction());
@@ -470,8 +480,8 @@ string simpleToDirect(string input) {
 	return result;
 }
 
-int calculate(string input) {
-	pIntStack stackP = NULL;
+float revertCalculating(string input) {
+	pFloatStack stackP = NULL;
 
 	for (int i = 0; i < input.length(); i++) {
 		if (input[i] == ' ') continue;
@@ -485,21 +495,21 @@ int calculate(string input) {
 				if (i >= input.length()) break; // need to debug
 				if (input[i] == ' ') break;
 			} while (isDigit(input[i]));
-			int number = stoi(tmp);
+			float number = stof(tmp);
 			push(&stackP, number);
 		}
 		else {
-			int secondNumber = stackP->data;
+			float secondNumber = stackP->data;
 			pop(&stackP);
 
 			//checking to existing next number
 			if (!(stackP->data)) throw "Error! Excess number in the expression.";
 
-			int firstNumber = stackP->data;
+			float firstNumber = stackP->data;
 			pop(&stackP);
 
 			//calculating and printing
-			int operationResult;
+			float operationResult;
 			switch (input[i]) {
 			case '+':
 				operationResult = firstNumber + secondNumber;
@@ -522,7 +532,7 @@ int calculate(string input) {
 				break;
 			}
 			push(&stackP, operationResult);
-			cout << firstNumber << " and " << secondNumber << " is " << stackP->data << endl;
+			cout << firstNumber << " and " << secondNumber << " is " << fixed << setprecision(2) << stackP->data << endl;
 
 		}
 

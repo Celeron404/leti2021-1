@@ -19,6 +19,12 @@ struct intStack {
 	pIntStack next;
 };
 
+typedef struct floatStack * pFloatStack;
+struct floatStack {
+	float data;
+	pFloatStack next;
+};
+
 
 
 void push(pCharStack* stackp, char data)
@@ -86,6 +92,29 @@ void pop(pIntStack* stackp) {
 
 int sizeOfStack(const pIntStack * stackp) {
 	pIntStack pointer = *stackp;
+	int count = 0;
+	while (pointer) {
+		count++;
+		pointer = (pointer)->next;
+	}
+	return count;
+}
+
+void push(pFloatStack* stackp, float data) {
+	pFloatStack newp = (pFloatStack)malloc(sizeof(struct floatStack));
+	newp->data = data;
+	newp->next = *stackp;
+	*stackp = newp;
+}
+
+void pop(pFloatStack* stackp) {
+	pFloatStack p = (*stackp)->next;
+	free(*stackp);
+	*stackp = p;
+}
+
+int sizeOfStack(const pFloatStack * stackp) {
+	pFloatStack pointer = *stackp;
 	int count = 0;
 	while (pointer) {
 		count++;
