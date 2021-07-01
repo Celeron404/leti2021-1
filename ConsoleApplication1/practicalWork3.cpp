@@ -52,7 +52,8 @@ bool polishExpressionCheck(string input);
 // polish notations
 string simpleToRevert(string input);
 string simpleToDirect(string input);
-float revertCalculating(string input);
+float revertNotationCalculating(string input);
+float directNotationCalculating(string input);
 short operatorPriority(char input);
 bool isOperator(char input);
 bool isDigit(char input);
@@ -198,18 +199,18 @@ void practicalWork3() {
 				break;
 			}
 
-			cout << "Calculating entered expression: \n";
+			cout << "\nCalculating entered expression: \n";
 			float result;
 			try {
 				switch (exprType) {
 				case 1:
-					result = revertCalculating(convertedExpression);
+					result = revertNotationCalculating(convertedExpression);
 					break;
 				case 2:
-
+					result = directNotationCalculating(input);
 					break;
 				case 3:
-					revertCalculating(input);
+					result = revertNotationCalculating(input);
 					break;
 				}
 			}
@@ -246,6 +247,9 @@ void removeSpacesFromString(string &input) {
 }
 
 void expressionPrimaryCheck(string input) {
+	if (input.empty())
+		throw "Error! Empty input. \nPlease, repeat input.";
+
 	//searching incorrect symbols
 	regex mask("[^0-9\\s\\+\\-\\*\\/\\(\\)]");
 	if (std::regex_search(input, mask))
@@ -301,6 +305,28 @@ void expressionSecondaryCheck(string input) {
 		*/
 		throw "Error! Input contains operators in begin or end of the expression. \nCorrect example: 1 + 3 * 4\nIncorrect example: *1 + 3 * 4- \nPlease, repeat input.\n";
 
+	// searching only operators
+	mask = "^[\\s\\+\\-\\*\\/\\(\\)]+$";
+	if (std::regex_search(input, mask))
+		/*
+		Error! Input contains only operators. Input must contains operands too.
+		Correct example: 1 + 3 * 4
+		Incorrect example: ( * )
+		Please, repeat input.
+		*/
+		throw "Error! Input contains only operators. Input must contains operands too. \nCorrect example: 1 + 3 * 4\nIncorrect example: ( * ) \nPlease, repeat input.\n";
+
+	//searching only numbers
+	mask = "^[\\s0-9]+$";
+	if (std::regex_search(input, mask))
+		/*
+		Error! Input contains only operands. Input must contains operators too.
+		Correct example: 1 + 3 * 4
+		Incorrect example: 23 31
+		Please, repeat input.
+		*/
+		throw "Error! Input contains only operands. Input must contains operators too. \nCorrect example: 1 + 3 * 4\nIncorrect example: 23 31 \nPlease, repeat input.\n";
+
 	//counting opened and closed brackets
 	if (!bracketCheck(input))
 		/*
@@ -328,6 +354,9 @@ bool bracketCheck(string input) {
 }
 
 bool polishExpressionCheck(string input) {
+	if (input.empty())
+		throw "Error! Empty input. \nPlease, repeat input.";
+
 	//searching incorrect symbols
 	regex mask("[^0-9\\s\\+\\-\\*\\/]");
 	if (std::regex_search(input, mask))
@@ -338,6 +367,28 @@ bool polishExpressionCheck(string input) {
 		Please, repeat input
 		*/
 		throw "Error! Input contains wrong symbols. \nCorrect symbols: + - * / \"space\" 0-9 \nBrackets are incorrect! \nPlease, repeat input.\n";
+
+	// searching only operators
+	mask = "^[\\s\\+\\-\\*\\/]+$";
+	if (std::regex_search(input, mask))
+		/*
+		Error! Input contains only operators. Input must contains operands too.
+		Correct example: 1 + 3 * 4
+		Incorrect example: ( * )
+		Please, repeat input.
+		*/
+		throw "Error! Input contains only operators. Input must contains operands too. \nCorrect example: 1 + 3 * 4\nIncorrect example: ( * ) \nPlease, repeat input.\n";
+
+	//searching only numbers
+	mask = "^[\\s0-9]+$";
+	if (std::regex_search(input, mask))
+		/*
+		Error! Input contains only operands. Input must contains operators too.
+		Correct example: 1 + 3 * 4
+		Incorrect example: 23 31
+		Please, repeat input.
+		*/
+		throw "Error! Input contains only operands. Input must contains operators too. \nCorrect example: 1 + 3 * 4\nIncorrect example: 23 31 \nPlease, repeat input.\n";
 
 	//counting operators and operands
 	int operators = 0, operands = 0, digits = 0;
@@ -448,7 +499,7 @@ string simpleToDirect(string input) {
 	int size = input.size();
 	//flip the string
 	char * temp = new char[size + 1];
-	for (int i = 0, j = size-1; i < size; i++, j--) {
+	for (int i = 0, j = size-1; i < size, j >= 0; i++, j--) {
 		temp[i] = input[j];
 	}
 	temp[size] = '\0';
@@ -470,7 +521,7 @@ string simpleToDirect(string input) {
 	delete temp;
 	temp = new char[size + 1];
 	//flip the string again
-	for (int i = 0, j = size - 1; i < size; i++, j--) {
+	for (int i = 0, j = size - 1; i < size, j >= 0; i++, j--) {
 		temp[i] = result[j];
 	}
 	temp[size] = '\0';
@@ -481,7 +532,7 @@ string simpleToDirect(string input) {
 	return result;
 }
 
-float revertCalculating(string input) {
+float revertNotationCalculating(string input) {
 	pFloatStack stackP = NULL;
 
 	for (int i = 0; i < input.length(); i++) {
@@ -493,7 +544,7 @@ float revertCalculating(string input) {
 			do {
 				tmp += input[i];
 				i++;
-				if (i >= input.length()) break; // need to debug
+				if (i >= input.length()) break;
 				if (input[i] == ' ') break;
 			} while (isDigit(input[i]));
 			float number = stof(tmp);
@@ -507,6 +558,76 @@ float revertCalculating(string input) {
 			if (!(stackP->data)) throw "Error! Excess number in the expression.";
 
 			float firstNumber = stackP->data;
+			pop(&stackP);
+
+			//calculating and printing
+			float operationResult;
+			switch (input[i]) {
+			case '+':
+				operationResult = firstNumber + secondNumber;
+				cout << "Sum of ";
+				break;
+
+			case '-':
+				operationResult = firstNumber - secondNumber;
+				cout << "Subtraction of ";
+				break;
+
+			case '*':
+				operationResult = firstNumber * secondNumber;
+				cout << "Multiplication of ";
+				break;
+
+			case '/':
+				operationResult = firstNumber / secondNumber;
+				cout << "Divide of ";
+				break;
+			}
+			push(&stackP, operationResult);
+			cout << firstNumber << " and " << secondNumber << " is " << fixed << setprecision(2) << stackP->data << endl;
+
+		}
+
+	}
+
+	return stackP->data;
+}
+
+float directNotationCalculating(string input) {
+	pFloatStack stackP = NULL;
+	int size = input.size();
+
+	for (int i = size - 1; i >= 0; i--) {
+		if (input[i] == ' ') continue;
+
+		if (isDigit(input[i])) {
+			//parsing the number to tmp and then converting to int
+			string inverseTmpNumber;
+			do {
+				inverseTmpNumber += input[i];
+				i--;
+				if (i >= input.length()) break;
+				if (input[i] == ' ') break;
+			} while (isDigit(input[i]));
+
+			// flipping the number back
+			char * tmpNumber = new char[inverseTmpNumber.size() + 1];
+			for (int k = 0, j = inverseTmpNumber.size() - 1; k < size, j >= 0; k++, j--) {
+				tmpNumber[k] = inverseTmpNumber[j];
+			}
+			tmpNumber[size] = '\0';
+
+			float number = stof(tmpNumber);
+			push(&stackP, number);
+		}
+		else {
+			float firstNumber = stackP->data;
+			pop(&stackP);
+
+			//checking to existing next number
+			if (!(stackP->data)) throw "Error! Excess number in the expression.";
+
+			float secondNumber = stackP->data;
 			pop(&stackP);
 
 			//calculating and printing
