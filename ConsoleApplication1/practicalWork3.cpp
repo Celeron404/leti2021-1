@@ -113,7 +113,7 @@ void practicalWork3() {
 				ifstream ifile;
 				string path;
 				cout << "Enter the path to the file. \n"
-					<< "Only english words in the file and path! Example: C:\\anime\\students.txt \n>> ";
+					<< "Only english words in the file and path! Example: C:\\anime\\gachi.txt \n>> ";
 				cin.ignore(32767, '\n');
 				getline(cin, path);
 				ifile.open(path);
@@ -124,6 +124,7 @@ void practicalWork3() {
 				else {
 					getline(ifile, userEntered);
 					ifile.close();
+					cout << "Expression from file: " << userEntered << endl;
 				}
 			}
 			else {
