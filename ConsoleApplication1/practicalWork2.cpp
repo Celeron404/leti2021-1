@@ -412,7 +412,7 @@ void printArr(int * arr, int size)
 }
 
 bool isDigit(char input) {
-	if (input >= 48 && input <= 57)
+	if (input >= 48 && input <= 57) // in Chars 48 = '0', 57 = '9'
 		return true;
 	else return false;
 }

@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <regex>
+#include <Windows.h> // Ќужно дл€ получени€ координат консоли и их изменени€
 using namespace std;
 
 typedef struct charStack* pCharStack;
@@ -16,12 +17,21 @@ struct stringStack {
 	pStringStack next;
 };
 
-void push(pCharStack* stackp, char data);
-void pop(pCharStack* stackp);
+typedef struct intStack* pIntStack;
+struct intStack {
+	int data;
+	pIntStack next;
+};
+
+void push(pCharStack * stackp, char data);
+void pop(pCharStack * stackp);
 int sizeOfStack(const pCharStack * stackp);
-void push(pStringStack* stackp, string data);
-void pop(pStringStack* stackp);
+void push(pStringStack * stackp, string data);
+void pop(pStringStack * stackp);
 int sizeOfStack(const pStringStack * stackp);
+void push(pIntStack * stackp, int data);
+void pop(pIntStack * stackp);
+int sizeOfStack(const pIntStack * stackp);
 
 void removeSpacesFromString(string &input);
 void expressionPrimaryCheck(string input);
@@ -32,161 +42,182 @@ bool polishExpressionCheck(string input);
 // polish notations
 string simpleToRevert(string input);
 string simpleToDirect(string input);
+int calculate(string input);
 short operatorPriority(char input);
 bool isOperator(char input);
 bool isDigit(char input);
 
+bool choiseNextAction();
+
 void practicalWork3() {
-	system("CLS");
-	cout << "Solution of task \"Working with stacks and queues, learning direct and reverse polish notation.\n";
-
-	bool inputIsCorrect = false;
-	short exprType;
-	string userEntered, input;
 	do {
-		// selecting the type of expression
-		do {
-			/*cout << "\nSelect the type of expression:\n"
-				<< "1) Simple notation\n"
-				<< "2) Direct polish notation\n"
-				<< "3) Reverse polish notation\n>> ";*/
-			cout << "\nSelect the type of expression:\n"
-				<< "1) Simple notation (checking, converting and calculating)\n"
-				<< "2) Direct polish notation (checking and calculating)\n"
-				<< "3) Reverse polish notation (checking and calculating)\n>> ";
-			cin >> exprType;
-			if (exprType == 1 || exprType == 2 || exprType == 3) {
-				inputIsCorrect = true;
-				break;
-			}
-			else
-				cout << "Error: wrong input. Please repeat menu selection.\n";
-		} while (!inputIsCorrect);
+		system("CLS");
+		cout << "Solution of task \"Working with stacks and queues, learning direct and reverse polish notation.\n";
 
-		// selecting an input method
-		inputIsCorrect = false;
-		short inputMethod;
+		bool inputIsCorrect = false;
+		short exprType;
+		string userEntered, input;
 		do {
-			cout << "\nSelect an input method:\n"
-				<< "1) File\n"
-				<< "2) Keyboard\n>> ";
-			cin >> inputMethod;
-			if (inputMethod == 1) {
-				inputIsCorrect = true;
-				break;
-			}
-			else if (inputMethod == 2) {
-				inputIsCorrect = true;
-				break;
-			}
-			else
-				cout << "Error: wrong input. Please repeat menu selection.\n";
-		} while (!inputIsCorrect);
+			// selecting the type of expression
+			do {
+				/*cout << "\nSelect the type of expression:\n"
+					<< "1) Simple notation\n"
+					<< "2) Direct polish notation\n"
+					<< "3) Reverse polish notation\n>> ";*/
+				cout << "\nSelect the type of expression:\n"
+					<< "1) Simple notation (checking, converting and calculating)\n"
+					<< "2) Direct polish notation (checking and calculating)\n"
+					<< "3) Reverse polish notation (checking and calculating)\n>> ";
+				cin >> exprType;
+				if (exprType == 1 || exprType == 2 || exprType == 3) {
+					inputIsCorrect = true;
+					break;
+				}
+				else
+					cout << "Error: wrong input. Please repeat menu selection.\n";
+			} while (!inputIsCorrect);
 
-		// entering the expression (or reading file)
-		inputIsCorrect = false;
-		if (inputMethod == 1) {
-			ifstream ifile;
-			string path;
-			cout << "Enter the path to the file. \n"
-				<< "Only english words in the file and path! Example: C:\\anime\\students.txt \n>> ";
-			cin.ignore(32767, '\n');
-			getline(cin, path);
-			ifile.open(path);
-			if (!ifile.is_open()) {
-				cout << "Error opening file! Please restart the program! \n";
-				throw - 1;
+			// selecting an input method
+			inputIsCorrect = false;
+			short inputMethod;
+			do {
+				cout << "\nSelect an input method:\n"
+					<< "1) Keyboard\n"
+					<< "2) File\n>> ";
+				cin >> inputMethod;
+				if (inputMethod == 1) {
+					inputIsCorrect = true;
+					break;
+				}
+				else if (inputMethod == 2) {
+					inputIsCorrect = true;
+					break;
+				}
+				else
+					cout << "Error: wrong input. Please repeat menu selection.\n";
+			} while (!inputIsCorrect);
+
+			// entering the expression (or reading file)
+			inputIsCorrect = false;
+			if (inputMethod == 2) {
+				ifstream ifile;
+				string path;
+				cout << "Enter the path to the file. \n"
+					<< "Only english words in the file and path! Example: C:\\anime\\students.txt \n>> ";
+				cin.ignore(32767, '\n');
+				getline(cin, path);
+				ifile.open(path);
+				if (!ifile.is_open()) {
+					cout << "Error opening file! Please restart the program! \n";
+					throw - 1;
+				}
+				else {
+					getline(ifile, userEntered);
+					ifile.close();
+				}
 			}
 			else {
-				getline(ifile, userEntered);
-				ifile.close();
+				cin.ignore(32767, '\n');
+				cout << "\nEnter the expression. Example: ";
+				switch (exprType) {
+				case 1:
+					cout << "(1 + 3) * 4";
+					break;
+				case 2:
+					cout << "* + 1 3 4";
+					break;
+				case 3:
+					cout << "1 3 + 4 *";
+					break;
+				}
+				cout << "\n>> ";
+
+				getline(cin, userEntered);
 			}
-		}
-		else {
-			cin.ignore(32767, '\n');
-			cout << "\nEnter the expression. Example: ";
+
+			// checking the expression
+			input = userEntered;
+			try {
+				switch (exprType) {
+				case 1:
+					expressionPrimaryCheck(input);
+					removeSpacesFromString(input);
+					expressionSecondaryCheck(input);
+					break;
+				case 2:
+					polishExpressionCheck(input);
+					break;
+				case 3:
+					polishExpressionCheck(input);
+					break;
+				}
+			}
+			catch (const char* msg) {
+				cout << msg;
+				continue;
+			}
+			inputIsCorrect = true;
+			if (inputIsCorrect) {
+				cout << "Input is correct.\n";
+				system("pause");
+			}
+
+			// conversion the expression into other types of notation
+			string convertedExpression;
 			switch (exprType) {
 			case 1:
-				cout << "(1 + 3) * 4";
+				cout << "Entered expression in the Direct Polish Notation: \n\t"
+					<< simpleToDirect(input) << endl;
+				convertedExpression = simpleToRevert(input);
+				cout << "Entered expression in the Reverse Polish Notation: \n\t"
+					<< convertedExpression << endl;
+				system("pause");
 				break;
 			case 2:
-				cout << "* + 1 3 4";
+				/*cout << "Entered expression in the Simple Notation: \n\t"
+					<< endl;
+				cout << "Entered expression in the Reverse Polish Notation: \n\t"
+					<< simpleToRevert(input) << endl;*/
 				break;
 			case 3:
-				cout << "1 3 + 4 *";
+				/*cout << "Entered expression in the Simple Notation: \n\t"
+					<< endl;
+				cout << "Entered expression in the Direct Polish Notation: \n\t"
+					<< endl;*/
 				break;
 			}
-			cout << "\n>> ";
 
-			getline(cin, userEntered);
-		}
+			cout << "Calculating entered expression: \n";
+			int result;
+			try {
+				switch (exprType) {
+				case 1:
+					result = calculate(convertedExpression);
+					break;
+				case 2:
 
-		// checking the expression
-		input = userEntered;
-		try {
-			switch (exprType) {
-			case 1:
-				expressionPrimaryCheck(input);
-				removeSpacesFromString(input);
-				expressionSecondaryCheck(input);
-				break;
-			case 2:
-				polishExpressionCheck(input);
-				break;
-			case 3:
-				polishExpressionCheck(input);
-				break;
+					break;
+				case 3:
+					calculate(input);
+					break;
+				}
 			}
-		}
-		catch (const char* msg) {
-			cout << msg;
-			continue;
-		}
-		inputIsCorrect = true;
-		if (inputIsCorrect) {
-			cout << "Input is correct.\n";
-			system("pause");
-		}
+			catch (const char* msg) {
+				inputIsCorrect = false;
+				cout << msg;
+				continue;
+			}
+			cout << "Result is ";
+			//// setting a console pointer
+			//HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+			//CONSOLE_SCREEN_BUFFER_INFO bi;
+			//GetConsoleScreenBufferInfo(hConsole, &bi);
+			//bi.dwCursorPosition.X += 10;
+			//SetConsoleCursorPosition(hConsole, bi.dwCursorPosition);			
+			cout << result << endl;
+		} while (!inputIsCorrect);
 
-		// conversion the expression into other types of notation
-		string convertedExpression;
-		switch (exprType) {
-		case 1:
-			cout << "Entered expression in the Direct Polish Notation: \n\t"
-				<< simpleToDirect(input) << endl;
-			convertedExpression = simpleToRevert(input);
-			cout << "Entered expression in the Reverse Polish Notation: \n\t"
-				<< convertedExpression << endl;
-			break;
-		case 2:
-			/*cout << "Entered expression in the Simple Notation: \n\t"
-				<< endl;
-			cout << "Entered expression in the Reverse Polish Notation: \n\t"
-				<< simpleToRevert(input) << endl;*/
-			break;
-		case 3:
-			/*cout << "Entered expression in the Simple Notation: \n\t"
-				<< endl;
-			cout << "Entered expression in the Direct Polish Notation: \n\t"
-				<< endl;*/
-			break;
-		}
-		system("pause");
-
-		//calculating
-		switch (exprType) {
-		case 1:
-
-			break;
-		case 2:
-
-			break;
-		case 3:
-
-			break;
-		}
-
-	} while (!inputIsCorrect);
+	} while (choiseNextAction());
 }
 
 void removeSpacesFromString(string &input) {
@@ -439,6 +470,67 @@ string simpleToDirect(string input) {
 	return result;
 }
 
+int calculate(string input) {
+	pIntStack stackP = NULL;
+
+	for (int i = 0; i < input.length(); i++) {
+		if (input[i] == ' ') continue;
+
+		if (isDigit(input[i])) {
+			//parsing the number to tmp and then converting to int
+			string tmp;
+			do {
+				tmp += input[i];
+				i++;
+				if (i >= input.length()) break; // need to debug
+				if (input[i] == ' ') break;
+			} while (isDigit(input[i]));
+			int number = stoi(tmp);
+			push(&stackP, number);
+		}
+		else {
+			int secondNumber = stackP->data;
+			pop(&stackP);
+
+			//checking to existing next number
+			if (!(stackP->data)) throw "Error! Excess number in the expression.";
+
+			int firstNumber = stackP->data;
+			pop(&stackP);
+
+			//calculating and printing
+			int operationResult;
+			switch (input[i]) {
+			case '+':
+				operationResult = firstNumber + secondNumber;
+				cout << "Sum of ";
+				break;
+
+			case '-':
+				operationResult = firstNumber - secondNumber;
+				cout << "Subtraction of ";
+				break;
+
+			case '*':
+				operationResult = firstNumber * secondNumber;
+				cout << "Multiplication of ";
+				break;
+
+			case '/':
+				operationResult = firstNumber / secondNumber;
+				cout << "Divide of ";
+				break;
+			}
+			push(&stackP, operationResult);
+			cout << firstNumber << " and " << secondNumber << " is " << stackP->data << endl;
+
+		}
+
+	}
+
+	return stackP->data;
+}
+
 short operatorPriority(char input) {
 	switch (input) {
 	case '(':
@@ -463,64 +555,3 @@ bool isOperator(char input) {
 	else
 		return false;
 }
-
-//int calculate(string input) {
-//	pCharStack stackP = NULL;
-//
-//	//stack<int> st;
-//	for (int i = 0; i < input.length(); i++) {
-//		if (isDigit(input[i])) {
-//
-//		}
-//		if (!bb(input[i])) {
-//			st.push(input[i] - '0');
-//		}
-//		else {
-//			int op2 = st.top();
-//			st.pop();
-//			int op1 = st.top();
-//			st.pop();
-//
-//			switch (input[i]) {
-//			case '+':
-//				st.push(op1 + op2);
-//				cout << op1;
-//				cout << "+";
-//				cout << op2 << endl;
-//				break;
-//
-//			case '-':
-//				st.push(op1 - op2);
-//				cout << op1;
-//				cout << "-";
-//				cout << op2 << endl;
-//				break;
-//
-//			case '*':
-//				st.push(op1 * op2);
-//				cout << op1;
-//				cout << "*";
-//				cout << op2 << endl;
-//				break;
-//
-//
-//			case '/':
-//				st.push(op1 / op2);
-//				cout << op1;
-//				cout << "/";
-//				cout << op2 << endl;
-//				break;
-//
-//			case '^':
-//				st.push(pow(op1, op2));
-//				cout << op1;
-//				cout << "^";
-//				cout << op2 << endl;
-//				break;
-//			}
-//		}
-//
-//	}
-//
-//	return st.top();
-//}
