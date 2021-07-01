@@ -46,10 +46,14 @@ void practicalWork3() {
 	do {
 		// selecting the type of expression
 		do {
-			cout << "\nSelect the type of expression:\n"
+			/*cout << "\nSelect the type of expression:\n"
 				<< "1) Simple notation\n"
 				<< "2) Direct polish notation\n"
-				<< "3) Reverse polish notation\n>> ";
+				<< "3) Reverse polish notation\n>> ";*/
+			cout << "\nSelect the type of expression:\n"
+				<< "1) Simple notation (checking, converting and calculating)\n"
+				<< "2) Direct polish notation (checking and calculating)\n"
+				<< "3) Reverse polish notation (checking and calculating)\n>> ";
 			cin >> exprType;
 			if (exprType == 1 || exprType == 2 || exprType == 3) {
 				inputIsCorrect = true;
@@ -145,24 +149,26 @@ void practicalWork3() {
 		}
 
 		// conversion the expression into other types of notation
+		string convertedExpression;
 		switch (exprType) {
 		case 1:
 			cout << "Entered expression in the Direct Polish Notation: \n\t"
 				<< simpleToDirect(input) << endl;
+			convertedExpression = simpleToRevert(input);
 			cout << "Entered expression in the Reverse Polish Notation: \n\t"
-				<< simpleToRevert(input) << endl;
+				<< convertedExpression << endl;
 			break;
 		case 2:
-			cout << "Entered expression in the Simple Notation: \n\t"
+			/*cout << "Entered expression in the Simple Notation: \n\t"
 				<< endl;
 			cout << "Entered expression in the Reverse Polish Notation: \n\t"
-				<< simpleToRevert(input) << endl;
+				<< simpleToRevert(input) << endl;*/
 			break;
 		case 3:
-			cout << "Entered expression in the Simple Notation: \n\t"
+			/*cout << "Entered expression in the Simple Notation: \n\t"
 				<< endl;
 			cout << "Entered expression in the Direct Polish Notation: \n\t"
-				<< endl;
+				<< endl;*/
 			break;
 		}
 		system("pause");
@@ -335,11 +341,21 @@ string simpleToRevert(string input) {
 			continue;
 		}
 
-		if (!isOperator(input[i])) {
+		while (!isOperator(input[i])) {
 			result += input[i];
-			result += ' ';
-			continue;
+			i++;
+			if (i >= input.length()) {
+				result += ' ';
+				break;
+			}
+
+			if (isOperator(input[i])) {
+				result += ' ';
+				//i--;
+				break;
+			}
 		}
+		if (i >= input.length()) break;
 
 		if (input[i] == ')') {
 			char pos = ' ';
@@ -362,7 +378,6 @@ string simpleToRevert(string input) {
 				if (sizeOfStack(&stackP) == 0)
 					break;
 			}
-
 		if (sizeOfStack(&stackP) == 0) {
 			push(&stackP, input[i]);
 			continue;
@@ -449,10 +464,63 @@ bool isOperator(char input) {
 		return false;
 }
 
-//bool isDigit(char input) {
-//	for (int i = 0; i < 9; i++) {
-//		if (input == i)
-//			return true;
+//int calculate(string input) {
+//	pCharStack stackP = NULL;
+//
+//	//stack<int> st;
+//	for (int i = 0; i < input.length(); i++) {
+//		if (isDigit(input[i])) {
+//
+//		}
+//		if (!bb(input[i])) {
+//			st.push(input[i] - '0');
+//		}
+//		else {
+//			int op2 = st.top();
+//			st.pop();
+//			int op1 = st.top();
+//			st.pop();
+//
+//			switch (input[i]) {
+//			case '+':
+//				st.push(op1 + op2);
+//				cout << op1;
+//				cout << "+";
+//				cout << op2 << endl;
+//				break;
+//
+//			case '-':
+//				st.push(op1 - op2);
+//				cout << op1;
+//				cout << "-";
+//				cout << op2 << endl;
+//				break;
+//
+//			case '*':
+//				st.push(op1 * op2);
+//				cout << op1;
+//				cout << "*";
+//				cout << op2 << endl;
+//				break;
+//
+//
+//			case '/':
+//				st.push(op1 / op2);
+//				cout << op1;
+//				cout << "/";
+//				cout << op2 << endl;
+//				break;
+//
+//			case '^':
+//				st.push(pow(op1, op2));
+//				cout << op1;
+//				cout << "^";
+//				cout << op2 << endl;
+//				break;
+//			}
+//		}
+//
 //	}
-//	false;
+//
+//	return st.top();
 //}
