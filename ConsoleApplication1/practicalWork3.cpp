@@ -236,8 +236,7 @@ void removeSpacesFromString(string &input) {
 	bool isRemoved;
 	do {
 		isRemoved = false;
-		for (unsigned i = 0; i < input.length(); i++)
-		{
+		for (unsigned i = 0; i < input.length(); i++) {
 			if (input[i] == ' ') {
 				input.erase(i, 1);
 				isRemoved = true;
@@ -340,8 +339,7 @@ void expressionSecondaryCheck(string input) {
 
 bool bracketCheck(string input) {
 	int openedBracket = 0, closedBracket = 0;
-	for (unsigned i = 0; i < input.length(); i++)
-	{
+	for (unsigned i = 0; i < input.length(); i++) {
 		if (input[i] == '(')
 			openedBracket++;
 		else if (input[i] == ')')
@@ -499,7 +497,7 @@ string simpleToDirect(string input) {
 	int size = input.size();
 	//flip the string
 	char * temp = new char[size + 1];
-	for (int i = 0, j = size-1; i < size, j >= 0; i++, j--) {
+	for (int i = 0, j = size - 1; i < size, j >= 0; i++, j--) {
 		temp[i] = input[j];
 	}
 	temp[size] = '\0';
@@ -528,7 +526,7 @@ string simpleToDirect(string input) {
 
 	result = temp;
 	delete temp;
-	
+
 	return result;
 }
 
